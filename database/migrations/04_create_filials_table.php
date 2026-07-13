@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('filials', function (Blueprint $table) {
             $table->id();
+            $table->string('cidade');
+            $table->string('endereco');
+            $table->text('datas_agenda')->nullable();
+            $table->text('servicos')->nullable();
+            $table->boolean('ativo')->default(true);
             $table->timestamps();
         });
     }

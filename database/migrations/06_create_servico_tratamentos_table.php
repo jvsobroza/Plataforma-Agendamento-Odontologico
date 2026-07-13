@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('servico_tratamentos', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('id_planos')->constrained('plano_tratamentos')->onDelete('cascade');
+            $table->foreignId('id_servico')->constrained('servicos')->onDelete('cascade');
+            $table->foreignId('id_agendamento')->constrained('agendamentos')->onDelete('cascade');
+            $table->integer('tempo');
+            $table->decimal('preco', 10, 2);
             $table->timestamps();
         });
     }

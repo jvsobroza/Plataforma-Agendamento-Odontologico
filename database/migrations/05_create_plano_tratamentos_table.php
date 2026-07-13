@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('plano_tratamentos', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('id_paciente')->constrained('pacientes')->onDelete('cascade');
+            $table->string('status')->default('Em andamento');
+            $table->text('servicos_planejados')->nullable();
+            $table->text('servicos_concluidos')->nullable();
+            $table->boolean('ativo')->default(true);
             $table->timestamps();
         });
     }
