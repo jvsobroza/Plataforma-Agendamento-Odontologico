@@ -23,7 +23,11 @@ class StoreFilialRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "cidade"=> "string|required",
+            "endereco"=> "string|required",
+            "datas_agenda"=> "text|required",
+            "servicos"=> "string|required",
+            "ativo" => "boolean",
         ];
     }
 }

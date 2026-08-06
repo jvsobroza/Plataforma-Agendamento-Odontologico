@@ -23,7 +23,12 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "nome"=> "required|string",
+            "email"=> "required|unique:user|email",
+            "senha"=> "required|min:6",
+            "tipo"=> "required|integer|in:1,2",
+            "id_filial"=> "required|integer|exists:filial,id",
+            "ativo"=> "boolean",
         ];
     }
 }
