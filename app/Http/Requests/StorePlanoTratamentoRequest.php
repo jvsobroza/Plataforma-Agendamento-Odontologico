@@ -23,7 +23,11 @@ class StorePlanoTratamentoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "id_paciente" => "required|integer|exists:pacientes,id",
+            "status"=> "required|string",
+            "servicos_planejados"=> "required|string",
+            "servicos_realizados"=> "required|string",
+            "ativo"=> "boolean",
         ];
     }
 }

@@ -23,7 +23,8 @@ class StoreServicoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "nome"=> "required|string",
+            "ativo" => "boolean",
         ];
     }
 }

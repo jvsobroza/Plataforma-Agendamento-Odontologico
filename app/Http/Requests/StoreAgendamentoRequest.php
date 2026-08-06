@@ -23,8 +23,8 @@ class StoreAgendamentoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "id_paciente" => "required|integer|exists:paciente,id",
-            "id_filial"=> "required|integer|exists:filial,id",
+            "id_paciente" => "required|integer|exists:pacientes,id",
+            "id_filial"=> "required|integer|exists:filials,id",
             "data_hora"=> "required|datetime|after_or_equal:today",
             "status_pagamento"=> "required|string",
             "status_agendamento"=> "required|string",

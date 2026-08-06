@@ -24,10 +24,10 @@ class StoreUserRequest extends FormRequest
     {
         return [
             "nome"=> "required|string",
-            "email"=> "required|unique:user|email",
+            "email"=> "required|unique:usuarios|email",
             "senha"=> "required|min:6",
             "tipo"=> "required|integer|in:1,2",
-            "id_filial"=> "required|integer|exists:filial,id",
+            "id_filial"=> "required|integer|exists:filials,id",
             "ativo"=> "boolean",
         ];
     }
