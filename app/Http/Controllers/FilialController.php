@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreFilialRequest;
+use App\Http\Requests\UpdateFilialRequest;
 use App\Models\Filial;
 use Illuminate\Http\Request;
 
@@ -12,7 +14,8 @@ class FilialController extends Controller
      */
     public function index()
     {
-        //
+        $filials = Filial::all();
+        return view("filial.index", compact("filials"));
     }
 
     /**
@@ -20,13 +23,13 @@ class FilialController extends Controller
      */
     public function create()
     {
-        //
+        return view("filial.create");
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreFilialRequest $request)
     {
         //
     }
@@ -50,7 +53,7 @@ class FilialController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Filial $filial)
+    public function update(UpdateFilialRequest $request, Filial $filial)
     {
         //
     }

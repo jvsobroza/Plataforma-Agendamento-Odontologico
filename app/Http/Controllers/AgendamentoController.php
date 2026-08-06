@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreAgendamentoRequest;
+use App\Http\Requests\UpdateAgendamentoRequest;
 use App\Models\Agendamento;
 use Illuminate\Http\Request;
 
@@ -12,7 +14,8 @@ class AgendamentoController extends Controller
      */
     public function index()
     {
-        //
+        $agendamentos = Agendamento::all();
+        return view("agendamento.index", compact("agendamentos"));
     }
 
     /**
@@ -20,13 +23,13 @@ class AgendamentoController extends Controller
      */
     public function create()
     {
-        //
+        return view("agendamento.create");
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreAgendamentoRequest $request)
     {
         //
     }
@@ -50,7 +53,7 @@ class AgendamentoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Agendamento $agendamento)
+    public function update(UpdateAgendamentoRequest $request, Agendamento $agendamento)
     {
         //
     }

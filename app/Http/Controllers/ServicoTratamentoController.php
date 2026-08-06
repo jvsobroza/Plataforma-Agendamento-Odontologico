@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreServicoTratamentoRequest;
+use App\Http\Requests\UpdateServicoTratamentoRequest;
 use App\Models\ServicoTratamento;
 use Illuminate\Http\Request;
 
@@ -12,7 +14,8 @@ class ServicoTratamentoController extends Controller
      */
     public function index()
     {
-        //
+        $servicostratamentos = ServicoTratamento::all();
+        return view("servicotratamento.index", compact("servicostratamentos"));
     }
 
     /**
@@ -20,13 +23,13 @@ class ServicoTratamentoController extends Controller
      */
     public function create()
     {
-        //
+        return view("servicotratamento.create");
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreServicoTratamentoRequest $request)
     {
         //
     }
@@ -50,7 +53,7 @@ class ServicoTratamentoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ServicoTratamento $servicoTratamento)
+    public function update(UpdateServicoTratamentoRequest $request, ServicoTratamento $servicoTratamento)
     {
         //
     }

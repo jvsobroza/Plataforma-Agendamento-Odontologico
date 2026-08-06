@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreServicoRequest;
+use App\Http\Requests\UpdateServicoRequest;
 use App\Models\Servico;
 use Illuminate\Http\Request;
 
@@ -12,7 +14,8 @@ class ServicoController extends Controller
      */
     public function index()
     {
-        //
+        $servicos = Servico::all();
+        return view("servico.index", compact("servicos"));
     }
 
     /**
@@ -20,13 +23,13 @@ class ServicoController extends Controller
      */
     public function create()
     {
-        //
+        return view("servico.create");
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreServicoRequest $request)
     {
         //
     }
@@ -50,7 +53,7 @@ class ServicoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Servico $servico)
+    public function update(UpdateServicoRequest $request, Servico $servico)
     {
         //
     }

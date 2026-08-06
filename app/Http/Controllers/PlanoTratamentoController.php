@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePlanoTratamentoRequest;
+use App\Http\Requests\UpdatePlanoTratamentoRequest;
 use App\Models\PlanoTratamento;
 use Illuminate\Http\Request;
 
@@ -12,7 +14,8 @@ class PlanoTratamentoController extends Controller
      */
     public function index()
     {
-        //
+        $planotratamentos = PlanoTratamento::all();
+        return view("planotratamento.index", compact("planotratamentos"));
     }
 
     /**
@@ -20,13 +23,13 @@ class PlanoTratamentoController extends Controller
      */
     public function create()
     {
-        //
+        return view("planotratamento.create");
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StorePlanoTratamentoRequest $request)
     {
         //
     }
@@ -50,7 +53,7 @@ class PlanoTratamentoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PlanoTratamento $planoTratamento)
+    public function update(UpdatePlanoTratamentoRequest $request, PlanoTratamento $planoTratamento)
     {
         //
     }

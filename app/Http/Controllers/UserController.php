@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StorePacienteRequest;
-use App\Http\Requests\UpdatePacienteRequest;
-use App\Models\Paciente;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
 
-class PacienteController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $pacientes = Paciente::all();
-        return view("paciente.index", compact("pacientes"));
+        $users = User::all();
+        return view("user.index", compact("users"));
     }
 
     /**
@@ -23,13 +23,13 @@ class PacienteController extends Controller
      */
     public function create()
     {
-        return view("paciente.create");
+        return view("user.create");
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePacienteRequest $request)
+    public function store(StoreUserRequest $request)
     {
         //
     }
@@ -37,7 +37,7 @@ class PacienteController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Paciente $paciente)
+    public function show(string $id)
     {
         //
     }
@@ -45,7 +45,7 @@ class PacienteController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Paciente $paciente)
+    public function edit(string $id)
     {
         //
     }
@@ -53,7 +53,7 @@ class PacienteController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePacienteRequest $request, Paciente $paciente)
+    public function update(UpdateUserRequest $request, string $id)
     {
         //
     }
@@ -61,7 +61,7 @@ class PacienteController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Paciente $paciente)
+    public function destroy(string $id)
     {
         //
     }
