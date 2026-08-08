@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreFilialRequest;
 use App\Http\Requests\UpdateFilialRequest;
 use App\Models\Filial;
-use Illuminate\Http\Request;
 
 class FilialController extends Controller
 {
@@ -15,7 +14,7 @@ class FilialController extends Controller
     public function index()
     {
         $filials = Filial::all();
-        return view("filial.index", compact("filials"));
+        return view('filial.index', compact('filials'));
     }
 
     /**
@@ -23,7 +22,7 @@ class FilialController extends Controller
      */
     public function create()
     {
-        return view("filial.create");
+        return view('filial.create');
     }
 
     /**
@@ -31,38 +30,46 @@ class FilialController extends Controller
      */
     public function store(StoreFilialRequest $request)
     {
-        //
+        $filial = Filial::create($request->validated());
+        $filial->servicos()->attach($request->servicos); //faz insert na tabela pivo filial_servico
+        return redirect()->route('filial.index')->with('success', 'Filial cadastrada com sucesso.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Filial $filial)
+    public function show(string $id)
     {
-        //
+        $filial = Filial::findOrFail($id);
+        return view('filial.show', compact('filial'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Filial $filial)
+    public function edit(string $id)
     {
-        //
+        $filial = Filial::findOrFail($id);
+        return view('filial.edit', compact('filial'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateFilialRequest $request, Filial $filial)
+    public function update(UpdateFilialRequest $request, string $id)
     {
-        //
+        $filial = Filial::findOrFail($id);
+        $filial->update($request->validated());
+        return redirect()->route('filial.index')->with('success', 'Filial atualizada com sucesso.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Filial $filial)
+    public function destroy(string $id)
     {
-        //
+        $filial = Filial::findOrFail($id);
+        $filial->update(['ativo' => false]);
+        return redirect()->route('filial.index')->with('success', 'Filial desativada com sucesso.');
     }
 }

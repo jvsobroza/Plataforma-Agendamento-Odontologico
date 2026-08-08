@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Models\Agendamento;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,8 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
-        return view("user.index", compact("users"));
+        $agendamento = Agendamento::all();
+        return view("user.index", compact("users", "agendamento"));
     }
 
     /**
@@ -63,6 +65,8 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $user->update(['ativo' => false]);
+        return redirect()->route('usuarios.index')->with('success', 'Usuário desativado com sucesso.');
     }
 }
