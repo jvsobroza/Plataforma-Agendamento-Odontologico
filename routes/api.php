@@ -2,13 +2,13 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AgendamentoController;
-use App\Http\Controllers\FilialController;
-use App\Http\Controllers\PacienteController;
-use App\Http\Controllers\PlanoTratamentoController;
-use App\Http\Controllers\ServicoController;
-use App\Http\Controllers\ServicoTratamentoController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\api\AgendamentoController;
+use App\Http\Controllers\api\FilialController;
+use App\Http\Controllers\api\PacienteController;
+use App\Http\Controllers\api\PlanoTratamentoController;
+use App\Http\Controllers\api\ServicoController;
+use App\Http\Controllers\api\ServicoTratamentoController;
+use App\Http\Controllers\api\UserController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
