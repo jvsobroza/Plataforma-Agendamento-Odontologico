@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('senha');
             $table->integer('tipo')->check('tipo IN (1, 2)'); // 1 - administrador 2 - secretária
-            $table->foreignId('id_filial')->nullable()->constrained('filiais')->onDelete('set null');
+            $table->foreignId('id_filial')->nullable()->constrained('filials')->onDelete('set null');
             $table->boolean('ativo')->default(true);
             $table->timestamps();
         });
