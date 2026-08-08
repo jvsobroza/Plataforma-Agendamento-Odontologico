@@ -60,6 +60,7 @@ class FilialController extends Controller
     {
         $filial = Filial::findOrFail($id);
         $filial->update($request->validated());
+        $filial->servicos()->sync($request->servicos); //atualiza a tabela pivo filial_servico
         return redirect()->route('filial.index')->with('success', 'Filial atualizada com sucesso.');
     }
 

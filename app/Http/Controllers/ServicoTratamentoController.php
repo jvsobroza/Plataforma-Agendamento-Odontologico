@@ -14,7 +14,7 @@ class ServicoTratamentoController extends Controller
      */
     public function index()
     {
-        $servicostratamentos = ServicoTratamento::all();
+        $servicostratamentos = ServicoTratamento::with(['planoTratamento', 'servico', 'agendamento'])->get();
         return view("servicotratamento.index", compact("servicostratamentos"));
     }
 
@@ -31,7 +31,8 @@ class ServicoTratamentoController extends Controller
      */
     public function store(StoreServicoTratamentoRequest $request)
     {
-        //
+        $servicoTratamento = ServicoTratamento::create($request->validated());
+        return redirect()->route('servicotratamento.index')->with('success', 'Serviço de Tratamento cadastrado com sucesso.');
     }
 
     /**
@@ -39,7 +40,8 @@ class ServicoTratamentoController extends Controller
      */
     public function show(ServicoTratamento $servicoTratamento)
     {
-        //
+        $servicoTratamento = ServicoTratamento::findOrFail($servicoTratamento->id);
+        return view('servicotratamento.show', compact('servicoTratamento'));
     }
 
     /**
@@ -47,7 +49,8 @@ class ServicoTratamentoController extends Controller
      */
     public function edit(ServicoTratamento $servicoTratamento)
     {
-        //
+        $servicoTratamento = ServicoTratamento::findOrFail($servicoTratamento->id);
+        return view('servicotratamento.edit', compact('servicoTratamento'));
     }
 
     /**
@@ -55,7 +58,8 @@ class ServicoTratamentoController extends Controller
      */
     public function update(UpdateServicoTratamentoRequest $request, ServicoTratamento $servicoTratamento)
     {
-        //
+        $servicoTratamento->update($request->validated());
+        return redirect()->route('servicotratamento.index')->with('success', 'Serviço de Tratamento atualizado com sucesso.');        
     }
 
     /**
@@ -63,6 +67,8 @@ class ServicoTratamentoController extends Controller
      */
     public function destroy(ServicoTratamento $servicoTratamento)
     {
-        //
+        $servicoTratamento = ServicoTratamento::findOrFail($servicoTratamento->id);
+        $servicoTratamento->update(['ativo' => false]);
+        return redirect()->route('servicotratamento.index')->with('success', 'Serviço de Tratamento desativado com sucesso.');
     }
 }

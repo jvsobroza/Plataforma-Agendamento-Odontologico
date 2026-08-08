@@ -33,7 +33,8 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        //
+        $user = User::create($request->validated());
+        return redirect()->route('usuarios.index')->with('success', 'Usuário cadastrado com sucesso.');
     }
 
     /**
@@ -41,7 +42,8 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        return view('user.show', compact('user'));
     }
 
     /**
@@ -49,7 +51,8 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        return view('user.edit', compact('user'));
     }
 
     /**
@@ -57,7 +60,9 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $user->update($request->validated());
+        return redirect()->route('usuarios.index')->with('success', 'Usuário atualizado com sucesso.');
     }
 
     /**
