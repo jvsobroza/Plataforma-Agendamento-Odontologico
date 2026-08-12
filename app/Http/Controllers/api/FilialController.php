@@ -12,21 +12,21 @@ class FilialController extends Controller
     public function index()
     {
         return response()->json(
-            Filial::where('ativo', true)->paginate(15)
+        Filial::with(['servicos'])->get()
         );
     }
 
     public function store(StoreFilialRequest $request)
     {
         $filial = Filial::create($request->validated());
-
+        $filial->servicos()->attach($request->servicos);
         return response()->json($filial, 201);
     }
 
     public function show(string $id)
     {
         return response()->json(
-            Filial::with(['usuarios', 'servicos'])->findOrFail($id)
+            Filial::with(['servicos'])->findOrFail($id)
         );
     }
 

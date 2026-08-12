@@ -25,7 +25,7 @@ class StoreFilialRequest extends FormRequest
         return [
             "cidade"=> "string|required",
             "endereco"=> "string|required",
-            "datas_agenda"=> "text|required",
+            "datas_agenda"=> "string|required",
             "servicos"=> "string|required",
             "ativo" => "boolean",
         ];
