@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PlanoTratamento extends Model
 {
-    protected $table = 'planos_tratamento';
+    protected $table = 'plano_tratamentos';
     protected $fillable = [
         'id_paciente',
         'status',
