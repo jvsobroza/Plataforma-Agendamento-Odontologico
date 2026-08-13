@@ -22,10 +22,14 @@ Route::get('/login', function () {
 })->name('login');
 
 Route::post('/login', function (Request $request) {
-    $credentials = $request->validate([
+    $request->validate([
         'email' => ['required', 'email'],
         'senha' => ['required'],
     ]);
+    $credentials = [
+        'email'    => $request->email,
+        'password' => $request->senha,
+    ];
 
     if (Auth::attempt($credentials)) {
         $request->session()->regenerate();

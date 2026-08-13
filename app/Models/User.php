@@ -42,4 +42,8 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Filial::class, 'id_filial');
     }
+    public function getAuthPasswordName() //sem isso login não autenticava por causa do nome senha ao invés de password
+    {
+        return 'senha';
+    }
 }
