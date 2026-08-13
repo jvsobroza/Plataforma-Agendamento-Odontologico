@@ -20,7 +20,7 @@ class ServicoTratamento extends Model
         return $this->belongsTo(Servico::class, 'id_servico');
     }
 
-    public function plano()
+    public function planoTratamento()
     {
         return $this->belongsTo(PlanoTratamento::class, 'id_planos');
     }
