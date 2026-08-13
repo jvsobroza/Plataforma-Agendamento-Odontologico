@@ -71,6 +71,7 @@ Route::middleware([CheckSecretaria::class])->prefix('secretaria')->name('secreta
 
     Route::resource('agendamentos', AgendamentoController::class);
     Route::resource('pacientes', PacienteController::class)->only(['index', 'show', 'edit', 'update']);
+    Route::resource('secretarias', UserController::class)->only(['show', 'edit', 'update']);
 });
 
 /*Route::post('/webhook/whatsapp', [PacienteController::class, 'webhook'])
