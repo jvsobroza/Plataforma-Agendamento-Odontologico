@@ -12,7 +12,7 @@ class PlanoTratamentoController extends Controller
     public function index()
     {
         return response()->json(
-            PlanoTratamento::where('ativo', true)->with('paciente')->paginate(15)
+            PlanoTratamento::where('ativo', true)->paginate(15)
         );
     }
 

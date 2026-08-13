@@ -18,8 +18,10 @@ class PacienteController extends Controller
 
     public function store(StorePacienteRequest $request)
     {
-        $paciente = Paciente::create($request->validated());
-
+        $data = $request->validated();
+        $data['data_nascimento'] = \Carbon\Carbon::createFromFormat('d/m/Y', $request->input('data_nascimento'))
+            ->format('Y-m-d');
+        $paciente = Paciente::create($data);
         return response()->json($paciente, 201);
     }
 

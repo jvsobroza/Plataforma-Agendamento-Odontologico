@@ -12,14 +12,17 @@ class FilialController extends Controller
     public function index()
     {
         return response()->json(
-        Filial::with(['servicos'])->get()
+            Filial::with(['servicos'])->get()
         );
     }
 
     public function store(StoreFilialRequest $request)
     {
         $filial = Filial::create($request->validated());
-        $filial->servicos()->attach($request->servicos);
+        if ($request->filled('servicos')) { //verifica se veio a servicos
+            $servicos = explode(',', $request->servicos);
+            $filial->servicos()->attach($servicos);
+        }
         return response()->json($filial, 201);
     }
 

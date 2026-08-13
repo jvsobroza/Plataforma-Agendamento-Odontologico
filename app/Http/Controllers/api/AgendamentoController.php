@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAgendamentoRequest;
 use App\Http\Requests\UpdateAgendamentoRequest;
 use App\Models\Agendamento;
+use Carbon\Carbon;
 
 class AgendamentoController extends Controller
 {
@@ -21,8 +22,10 @@ class AgendamentoController extends Controller
 
     public function store(StoreAgendamentoRequest $request)
     {
-        $agendamento = Agendamento::create($request->validated());
-
+        $data = $request->validated();
+        $data['data_hora'] = Carbon::createFromFormat('d-m-Y H:i', $request->input('data_hora'))
+            ->format('Y-m-d H:i:s');
+        $agendamento = Agendamento::create($data);
         return response()->json($agendamento->load(['paciente', 'filial']), 201);
     }
 

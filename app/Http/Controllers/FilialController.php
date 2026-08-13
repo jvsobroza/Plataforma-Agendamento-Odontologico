@@ -31,7 +31,10 @@ class FilialController extends Controller
     public function store(StoreFilialRequest $request)
     {
         $filial = Filial::create($request->validated());
-        $filial->servicos()->attach($request->servicos); //faz insert na tabela pivo filial_servico
+        if ($request->filled('servicos')) {
+            $servicos = explode(',', $request->servicos);
+            $filial->servicos()->attach($servicos);
+        } //faz insert na tabela pivo filial_servico
         return redirect()->route('filial.index')->with('success', 'Filial cadastrada com sucesso.');
     }
 
