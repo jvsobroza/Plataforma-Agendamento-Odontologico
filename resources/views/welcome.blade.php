@@ -1,59 +1,71 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Clínica</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sante Oral | Login</title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
 </head>
 
 <body>
-    <nav class="nav navbar navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand nav-logo" href="{{ url('/') }}">
-                <span class="logo-name"></span>
-            </a>
-        </div>
-    </nav>
 
-    <main class="main-content">
-        <div class="login-card shadow-lg">
-            <h3 class="text-center mb-4 text-white" style="letter-spacing: 1px;">Acesse sua Conta</h3>
-            <form action="{{ url('/login') }}" method="POST">
-                @csrf
-                @if ($errors->any())
-                <div class="alert alert-danger p-2" style="font-size: 13px;">
-                    <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-                @endif
-                <div class="mb-3">
-                    <label for="email" class="form-label">E-MAIL</label>
-                    <input type="email" class="form-control form-control-custom @error('email') is-invalid @enderror" id="email" name="email" placeholder="seu@email.com" required>
-                </div>
-                <div class="mb-4">
-                    <label for="password" class="form-label">SENHA</label>
-                    <input type="password" class="form-control form-control-custom @error('senha') is-invalid @enderror" id="senha" name="senha" placeholder="••••••••" required>
-                </div>
-                <div class="d-grid gap-3">
-                    <button type="submit" class="btn btn-primary text-uppercase fw-semibold" style="letter-spacing: 1px; font-size: 13px; border-radius: 0;">Logar</button>
-                </div>
-            </form>
+    <div class="login-wrapper">
+        <div class="brand-badge">
+            <img src="{{ asset('images/logo.png') }}" alt="Sante Oral Odontologia">
         </div>
-    </main>
-
-    <footer class="footer mt-auto">
-        <div class="container">
-            <div class="footer-bottom d-flex justify-content-between align-items-center">
-                <span>Desenvolvido por João Victor Sobroza Dal Ross — 2026</span>
+        <div class="login-card">
+            <h1 class="login-title">Login</h1>
+            @if (session('status'))
+            <div class="alert-status">
+                {{ session('status') }}
             </div>
+            @endif
+
+            <form action="{{ route('login') }}" method="POST" novalidate>
+                @csrf
+
+                <div class="form-row">
+                    <label for="email" class="form-label">Email:</label>
+                    <input
+                        type="email"
+                        class="form-control @error('email') is-invalid @enderror"
+                        id="email"
+                        name="email"
+                        value="{{ old('email') }}"
+                        placeholder="Insira o Email"
+                        required
+                        autofocus>
+                    @error('email')
+                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="form-row">
+                    <label for="senha" class="form-label">Senha:</label>
+                    <input
+                        type="password"
+                        class="form-control @error('password') is-invalid @enderror"
+                        id="senha"
+                        name="password"
+                        placeholder="Insira a Senha"
+                        required>
+                    @error('password')
+                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <button type="submit" class="btn btn-login">Logar</button>
+            </form>
+
         </div>
-    </footer>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    </div>
+
 </body>
 
 </html>
