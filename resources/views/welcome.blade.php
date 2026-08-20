@@ -49,12 +49,12 @@
                     <label for="senha" class="form-label">Senha:</label>
                     <input
                         type="password"
-                        class="form-control @error('password') is-invalid @enderror"
+                        class="form-control @error('senha') is-invalid @enderror"
                         id="senha"
-                        name="password"
+                        name="senha"
                         placeholder="Insira a Senha"
                         required>
-                    @error('password')
+                    @error('senha')
                     <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror
                 </div>
