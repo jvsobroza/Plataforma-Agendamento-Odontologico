@@ -15,7 +15,7 @@ class PlanoTratamentoController extends Controller
     public function index()
     {
         $planotratamentos = PlanoTratamento::all();
-        return view("planotratamento.index", compact("planotratamentos"));
+        return view("plano-tratamento.index", compact("planotratamentos"));
     }
 
     /**
@@ -23,7 +23,7 @@ class PlanoTratamentoController extends Controller
      */
     public function create()
     {
-        return view("planotratamento.create");
+        return view("plano-tratamento.create");
     }
 
     /**
@@ -32,7 +32,7 @@ class PlanoTratamentoController extends Controller
     public function store(StorePlanoTratamentoRequest $request)
     {
         $planoTratamento = PlanoTratamento::create($request->validated());
-        return redirect()->route('planotratamento.index')->with('success', 'Plano de Tratamento cadastrado com sucesso.');
+        return redirect()->route('plano-tratamento.index')->with('success', 'Plano de Tratamento cadastrado com sucesso.');
     }
 
     /**
@@ -41,7 +41,7 @@ class PlanoTratamentoController extends Controller
     public function show(PlanoTratamento $planoTratamento)
     {
         $planoTratamento = PlanoTratamento::with(['paciente'])->findOrFail($planoTratamento->id);
-        return view('planotratamento.show', compact('planoTratamento'));
+        return view('plano-tratamento.show', compact('planoTratamento'));
     }
 
     /**
@@ -50,7 +50,7 @@ class PlanoTratamentoController extends Controller
     public function edit(PlanoTratamento $planoTratamento)
     {
         $planoTratamento = PlanoTratamento::with(['paciente'])->findOrFail($planoTratamento->id);
-        return view('planotratamento.edit', compact('planoTratamento'));
+        return view('plano-tratamento.edit', compact('planoTratamento'));
     }
 
     /**
@@ -59,7 +59,7 @@ class PlanoTratamentoController extends Controller
     public function update(UpdatePlanoTratamentoRequest $request, PlanoTratamento $planoTratamento)
     {
         $planoTratamento->update($request->validated());
-        return redirect()->route('planotratamento.index')->with('success', 'Plano de Tratamento atualizado com sucesso.');
+        return redirect()->route('plano-tratamento.index')->with('success', 'Plano de Tratamento atualizado com sucesso.');
     }
 
     /**
@@ -69,6 +69,6 @@ class PlanoTratamentoController extends Controller
     {
         $planoTratamento = PlanoTratamento::findOrFail($planoTratamento->id);
         $planoTratamento->update(['ativo' => false]);
-        return redirect()->route('planotratamento.index')->with('success', 'Plano de Tratamento desativado com sucesso.');
+        return redirect()->route('plano-tratamento.index')->with('success', 'Plano de Tratamento desativado com sucesso.');
     }
 }

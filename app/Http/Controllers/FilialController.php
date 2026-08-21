@@ -14,7 +14,7 @@ class FilialController extends Controller
     public function index()
     {
         $filials = Filial::all();
-        return view('filial.index', compact('filials'));
+        return view('filiais.index', compact('filials'));
     }
 
     /**
@@ -22,7 +22,7 @@ class FilialController extends Controller
      */
     public function create()
     {
-        return view('filial.create');
+        return view('filiais.create');
     }
 
     /**
@@ -35,7 +35,7 @@ class FilialController extends Controller
             $servicos = explode(',', $request->servicos);
             $filial->servicos()->attach($servicos);
         } //faz insert na tabela pivo filial_servico
-        return redirect()->route('filial.index')->with('success', 'Filial cadastrada com sucesso.');
+        return redirect()->route('filiais.index')->with('success', 'Filial cadastrada com sucesso.');
     }
 
     /**
@@ -44,7 +44,7 @@ class FilialController extends Controller
     public function show(string $id)
     {
         $filial = Filial::findOrFail($id);
-        return view('filial.show', compact('filial'));
+        return view('filiais.show', compact('filial'));
     }
 
     /**
@@ -53,7 +53,7 @@ class FilialController extends Controller
     public function edit(string $id)
     {
         $filial = Filial::findOrFail($id);
-        return view('filial.edit', compact('filial'));
+        return view('filiais.edit', compact('filial'));
     }
 
     /**
@@ -64,7 +64,7 @@ class FilialController extends Controller
         $filial = Filial::findOrFail($id);
         $filial->update($request->validated());
         $filial->servicos()->sync($request->servicos); //atualiza a tabela pivo filial_servico
-        return redirect()->route('filial.index')->with('success', 'Filial atualizada com sucesso.');
+        return redirect()->route('filiais.index')->with('success', 'Filial atualizada com sucesso.');
     }
 
     /**
@@ -74,6 +74,6 @@ class FilialController extends Controller
     {
         $filial = Filial::findOrFail($id);
         $filial->update(['ativo' => false]);
-        return redirect()->route('filial.index')->with('success', 'Filial desativada com sucesso.');
+        return redirect()->route('filiais.index')->with('success', 'Filial desativada com sucesso.');
     }
 }

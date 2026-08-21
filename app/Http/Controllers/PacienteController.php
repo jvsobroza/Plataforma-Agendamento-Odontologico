@@ -15,7 +15,7 @@ class PacienteController extends Controller
     public function index()
     {
         $pacientes = Paciente::all();
-        return view("paciente.index", compact("pacientes"));
+        return view("pacientes.index", compact("pacientes"));
     }
 
     /**
@@ -23,7 +23,7 @@ class PacienteController extends Controller
      */
     public function create()
     {
-        return view("paciente.create");
+        return view("pacientes.create");
     }
 
     /**
@@ -38,7 +38,7 @@ class PacienteController extends Controller
         }
 
         $paciente = Paciente::create($request->validated());
-        return redirect()->route('paciente.index')->with('success', 'Paciente cadastrado com sucesso.');
+        return redirect()->route('pacientes.index')->with('success', 'Paciente cadastrado com sucesso.');
     }
 
     protected function isValidate($attribute, $value) //https://www.guj.com.br/t/laravel-validar-cpf/382494/
@@ -64,7 +64,7 @@ class PacienteController extends Controller
     public function show(Paciente $paciente)
     {
         $paciente = Paciente::with(['planoTratamento'])->findOrFail($paciente->id);
-        return view('paciente.show', compact('paciente'));
+        return view('pacientes.show', compact('paciente'));
     }
 
     /**
@@ -73,7 +73,7 @@ class PacienteController extends Controller
     public function edit(Paciente $paciente)
     {
         $paciente = Paciente::with(['planoTratamento'])->findOrFail($paciente->id);
-        return view('paciente.edit', compact('paciente'));
+        return view('pacientes.edit', compact('paciente'));
     }
 
     /**
@@ -82,7 +82,7 @@ class PacienteController extends Controller
     public function update(UpdatePacienteRequest $request, Paciente $paciente)
     {
         $paciente->update($request->validated());
-        return redirect()->route('paciente.index')->with('success', 'Paciente atualizado com sucesso.');
+        return redirect()->route('pacientes.index')->with('success', 'Paciente atualizado com sucesso.');
     }
 
     /**
@@ -92,7 +92,7 @@ class PacienteController extends Controller
     {
         $paciente = Paciente::findOrFail($paciente->id);
         $paciente->update(['ativo' => false]);
-        return redirect()->route('paciente.index')->with('success', 'Paciente desativado com sucesso.');
+        return redirect()->route('pacientes.index')->with('success', 'Paciente desativado com sucesso.');
     }
 
     public function webhook(Request $request) {}

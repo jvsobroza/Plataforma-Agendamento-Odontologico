@@ -15,7 +15,7 @@ class AgendamentoController extends Controller
     public function index()
     {
         $agendamentos = Agendamento::with(['paciente', 'filial'])->get();
-        return view("agendamento.index", compact("agendamentos"));
+        return view("agendamentos.index", compact("agendamentos"));
     }
 
     /**
@@ -23,7 +23,7 @@ class AgendamentoController extends Controller
      */
     public function create()
     {
-        return view("agendamento.create");
+        return view("agendamentos.create");
     }
 
     /**
@@ -32,7 +32,7 @@ class AgendamentoController extends Controller
     public function store(StoreAgendamentoRequest $request)
     {
         $agendamento = Agendamento::create($request->validated());
-        return redirect()->route('agendamento.index')->with('success', 'Agendamento cadastrado com sucesso.');
+        return redirect()->route('agendamentos.index')->with('success', 'Agendamento cadastrado com sucesso.');
     }
 
     /**
@@ -41,7 +41,7 @@ class AgendamentoController extends Controller
     public function show(Agendamento $agendamento)
     {
         $agendamento = Agendamento::with(['paciente', 'filial'])->findOrFail($agendamento->id);
-        return view('agendamento.show', compact('agendamento'));
+        return view('agendamentos.show', compact('agendamento'));
     }
 
     /**
@@ -50,7 +50,7 @@ class AgendamentoController extends Controller
     public function edit(Agendamento $agendamento)
     {
         $agendamento = Agendamento::with(['paciente', 'filial'])->findOrFail($agendamento->id);
-        return view('agendamento.edit', compact('agendamento'));
+        return view('agendamentos.edit', compact('agendamento'));
     }
 
     /**
@@ -59,7 +59,7 @@ class AgendamentoController extends Controller
     public function update(UpdateAgendamentoRequest $request, Agendamento $agendamento)
     {
         $agendamento->update($request->validated());
-        return redirect()->route('agendamento.index')->with('success', 'Agendamento atualizado com sucesso.');
+        return redirect()->route('agendamentos.index')->with('success', 'Agendamento atualizado com sucesso.');
     }
 
     /**
@@ -69,6 +69,6 @@ class AgendamentoController extends Controller
     {
         $agendamento = Agendamento::findOrFail($agendamento->id);
         $agendamento->update(['ativo' => false]);
-        return redirect()->route('agendamento.index')->with('success', 'Agendamento desativado com sucesso.');
+        return redirect()->route('agendamentos.index')->with('success', 'Agendamento desativado com sucesso.');
     }
 }
