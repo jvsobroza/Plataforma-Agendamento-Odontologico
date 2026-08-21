@@ -59,8 +59,6 @@ Route::middleware([CheckDentista::class])->prefix('dentista')->name('dentista.')
         return view('dentista.index');
     })->name('index');
 
-    Route::resource('agendamentos', AgendamentoController::class);
-    Route::resource('pacientes', PacienteController::class);
     Route::resource('filiais', FilialController::class);
     Route::resource('planos-tratamento', PlanoTratamentoController::class);
     Route::resource('servicos', ServicoController::class);
@@ -68,12 +66,16 @@ Route::middleware([CheckDentista::class])->prefix('dentista')->name('dentista.')
     Route::resource('secretarias', UserController::class);
 });
 
+Route::middleware(['auth'])->group(function () {
+    Route::resource('agendamentos', AgendamentoController::class);
+    Route::resource('pacientes', PacienteController::class);
+});
+
 Route::middleware([CheckSecretaria::class])->prefix('secretaria')->name('secretaria.')->group(function () {
     Route::get('/', function () {
         return view('secretaria.index');
     })->name('index');
 
-    Route::resource('agendamentos', AgendamentoController::class);
     Route::resource('pacientes', PacienteController::class)->only(['index', 'show', 'edit', 'update']);
     Route::resource('secretarias', UserController::class)->only(['show', 'edit', 'update']);
 });

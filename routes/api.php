@@ -15,15 +15,15 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
-Route::apiResource('usuarios', UserController::class);
-Route::apiResource('pacientes', PacienteController::class);
+Route::apiResource('usuarios', UserController::class)->names('api.usuarios');
+Route::apiResource('pacientes', PacienteController::class)->names('api.pacientes');
 
-Route::apiResource('filials', FilialController::class);
-Route::get('filials/{id}/servicos', [FilialController::class, 'servicos']);
+Route::apiResource('filials', FilialController::class)->names('api.filials');
 
-Route::apiResource('agendamentos', AgendamentoController::class);
-Route::apiResource('planos-tratamento', PlanoTratamentoController::class);
-Route::apiResource('servicos-tratamento', ServicoTratamentoController::class);
+Route::apiResource('agendamentos', AgendamentoController::class)
+    ->names('api.agendamentos');
+Route::apiResource('planos-tratamento', PlanoTratamentoController::class)->names('api.planos-tratamento');
+Route::apiResource('servicos-tratamento', ServicoTratamentoController::class)->names('api.servicos-tratamento');
 Route::put('servicos-tratamento/{id}', [ServicoTratamentoController::class, 'update']);
 
-Route::apiResource('servicos', ServicoController::class);
+Route::apiResource('servicos', ServicoController::class)->names('api.servicos');
