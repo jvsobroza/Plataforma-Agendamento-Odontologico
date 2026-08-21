@@ -55,9 +55,7 @@ Route::post('/logout', function (Request $request) {
 })->name('logout');
 
 Route::middleware([CheckDentista::class])->prefix('dentista')->name('dentista.')->group(function () {
-    Route::get('/', function () {
-        return view('dentista.index');
-    })->name('index');
+    Route::get('/', [UserController::class, 'index'])->name('index');
 
     Route::resource('filiais', FilialController::class);
     Route::resource('planos-tratamento', PlanoTratamentoController::class);
