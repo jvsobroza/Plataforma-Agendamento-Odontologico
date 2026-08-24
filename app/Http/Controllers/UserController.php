@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\Agendamento;
+use App\Models\Filial;
 use App\Models\Paciente;
 use App\Models\User;
 use Carbon\Carbon;
@@ -22,9 +23,28 @@ class UserController extends Controller
         $consultasHoje = Agendamento::whereDate('data_hora', $hoje)->where('ativo', true)->count();
         $totalPacientes = Paciente::where('ativo', true)->count();
         $consultasNoMes = Agendamento::whereMonth('data_hora', $hoje->month)->whereYear('data_hora', $hoje->year)->where('ativo', true)->count();
+        $filials = Filial::where('ativo', true)->get();
+        $filial = [];
+        $diaHoje = now()->dayOfWeek - 1; //00 domingo, 01 segunda, 02 terça, 03 quarta, 04 quinta, 05 sexta, 06 sábado
+        foreach ($filials as $f) {
+            $filialData = explode(';', $f->datas_agenda);
+            foreach ($filialData as $fd) {
+                $data = strtolower($fd);
+                if ($data == strtolower($diaHoje)) {
+                    $filial[] = [
+                        'id' => $f->id,
+                        'cidade' => $f->cidade,
+                        'endereco' => $f->endereco,
+                        'datas_agenda' => $f->datas_agenda,
+                        'servicos' => $f->servicos,
+                    ];
+                }
+            }
+        }
         $agendamentosHoje = Agendamento::with(['paciente', 'servicoTratamentos.servico'])
             ->whereDate('data_hora', $hoje)
             ->where('ativo', true)
+            ->where('id_filial', $filial[0]['id'] ?? null) //filtra pelo ID da filial
             ->orderBy('data_hora')
             ->get();
 
@@ -89,8 +109,10 @@ class UserController extends Controller
             'consultasNoMes',
             'agendaHoje',
             'proximos',
+            'filial',
         ));
     }
+
 
     /**
      * Show the form for creating a new resource.

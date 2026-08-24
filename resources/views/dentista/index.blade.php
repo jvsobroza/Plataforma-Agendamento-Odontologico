@@ -53,7 +53,7 @@
   <div class="col-lg-8">
     <div class="panel">
       <div class="panel-header">
-        <h2 class="panel-title">Agenda Do Dia - Filial Jaguari</h2> <!-- depois alterar isso para a filial do dia-->
+        <h2 class="panel-title">Agenda Do Dia - Filial {{ $filial[0]['cidade'] }}</h2>
         <a href="{{ route('agendamentos.index') }}" class="pill-tag">{{ count($agendaHoje ?? []) ?: 0 }} Consultas</a>
       </div>
 
