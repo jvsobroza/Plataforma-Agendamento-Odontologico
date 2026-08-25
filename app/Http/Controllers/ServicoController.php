@@ -14,7 +14,7 @@ class ServicoController extends Controller
      */
     public function index()
     {
-        $servicos = Servico::all();
+        $servicos = Servico::where('ativo', true)->orderBy('nome')->get();
         return view("servicos.index", compact("servicos"));
     }
 
@@ -32,7 +32,7 @@ class ServicoController extends Controller
     public function store(StoreServicoRequest $request)
     {
         $servico = Servico::create($request->validated());
-        return redirect()->route('servicos.index')->with('success', 'Serviço cadastrado com sucesso.');
+        return redirect()->route('dentista.servicos.index')->with('success', 'Serviço cadastrado com sucesso.');
     }
 
     /**
@@ -40,7 +40,7 @@ class ServicoController extends Controller
      */
     public function show(Servico $servico)
     {
-        return view('servicos.show', compact('servico'));
+        return view('dentista.servicos.show', compact('servico'));
     }
 
     /**
@@ -58,7 +58,7 @@ class ServicoController extends Controller
     public function update(UpdateServicoRequest $request, Servico $servico)
     {
         $servico->update($request->validated());
-        return redirect()->route('servicos.index')->with('success', 'Serviço atualizado com sucesso.');
+        return redirect()->route('dentista.servicos.index')->with('success', 'Serviço atualizado com sucesso.');
     }
 
     /**
@@ -68,6 +68,6 @@ class ServicoController extends Controller
     {
         $servico = Servico::findOrFail($servico->id);
         $servico->update(['ativo' => false]);
-        return redirect()->route('servicos.index')->with('success', 'Serviço desativado com sucesso.');
+        return redirect()->route('dentista.servicos.index')->with('success', 'Serviço desativado com sucesso.');
     }
 }
