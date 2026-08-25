@@ -13,8 +13,28 @@ class FilialController extends Controller
      */
     public function index()
     {
-        $filials = Filial::all();
-        return view('filiais.index', compact('filials'));
+        $filiais = Filial::with('servicos')->where('ativo', true)->get();
+        $diaSemana = [
+            00 => 'Domingo',
+            01 => 'Segunda-feira',
+            02 => 'Terça-feira',
+            03 => 'Quarta-feira',
+            04 => 'Quinta-feira',
+            05 => 'Sexta-feira',
+            06 => 'Sábado',
+        ];
+        foreach ($filiais as $filial) {
+            $numeros = !empty($filial->datas_agenda) ? explode(';', $filial->datas_agenda) : [];
+            $nomes = [];
+            foreach ($numeros as $num) {
+                $num = (int) $num; //erro se não convertesse pra inteiro
+                if (isset($diaSemana[$num])) {
+                    $nomes[] = $diaSemana[$num];
+                }
+            }
+            $filial->dias_nomes = $nomes;
+        }
+        return view('filiais.index', compact('filiais'));
     }
 
     /**
