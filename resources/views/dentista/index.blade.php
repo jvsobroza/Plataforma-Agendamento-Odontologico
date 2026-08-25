@@ -9,7 +9,7 @@
 </div>
 
 <div class="topbar-actions">
-  <span class="pill-date">{{ \Carbon\Carbon::now()->locale('pt_BR')->translatedFormat('d \d\e F, Y') }}</span>
+  <span class="pill-date">{{ \Carbon\Carbon::today()->locale('pt_BR')->translatedFormat('d \d\e F, Y') }}</span>
   <a href="{{ route('agendamentos.create') }}" class="btn-primary-brand">
     <i class="bi bi-plus-lg"></i> Novo Agendamento
   </a>
