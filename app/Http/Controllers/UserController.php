@@ -25,7 +25,7 @@ class UserController extends Controller
         $consultasNoMes = Agendamento::whereMonth('data_hora', $hoje->month)->whereYear('data_hora', $hoje->year)->where('ativo', true)->count();
         $filials = Filial::where('ativo', true)->get();
         $filial = [];
-        $diaHoje = now()->dayOfWeek - 1; //00 domingo, 01 segunda, 02 terça, 03 quarta, 04 quinta, 05 sexta, 06 sábado
+        $diaHoje = now()->dayOfWeek; //00 domingo, 01 segunda, 02 terça, 03 quarta, 04 quinta, 05 sexta, 06 sábado
         foreach ($filials as $f) {
             $filialData = explode(';', $f->datas_agenda);
             foreach ($filialData as $fd) {
