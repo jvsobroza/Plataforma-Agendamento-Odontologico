@@ -27,7 +27,7 @@ class StorePacienteRequest extends FormRequest
             "cpf"=> "required|string|unique:pacientes,id|max:11",
             "data_nascimento"=> "required|date",
             "telefone"=> "required|string",
-            "observacoes_medicas"=> "string",
+            "observacoes_medicas"=> "nullable|string",
             "ativo" => "boolean",
         ];
     }

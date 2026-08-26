@@ -63,7 +63,7 @@ class PacienteController extends Controller
      */
     public function show(Paciente $paciente)
     {
-        $paciente = Paciente::with(['planoTratamento'])->findOrFail($paciente->id);
+        $paciente = Paciente::with(['planos', 'agendamentos'])->findOrFail($paciente->id);
         return view('pacientes.show', compact('paciente'));
     }
 
@@ -72,7 +72,7 @@ class PacienteController extends Controller
      */
     public function edit(Paciente $paciente)
     {
-        $paciente = Paciente::with(['planoTratamento'])->findOrFail($paciente->id);
+        $paciente = Paciente::findOrFail($paciente->id);
         return view('pacientes.edit', compact('paciente'));
     }
 
@@ -81,8 +81,20 @@ class PacienteController extends Controller
      */
     public function update(UpdatePacienteRequest $request, Paciente $paciente)
     {
+        if (!$this->isValidate('cpf', $request->validated()['cpf'])) {
+            return redirect()->back()
+                ->withErrors(['cpf' => 'O CPF informado não é válido.'])
+                ->withInput();
+        }
+        if ($paciente->cpf != $request->validated()['cpf']) {
+            if (Paciente::where('cpf', $request->validated()['cpf'])->exists()) {
+                return redirect()->back()
+                    ->withErrors(['cpf' => 'O CPF informado já está em uso.'])
+                    ->withInput();
+            }
+        }
         $paciente->update($request->validated());
-        return redirect()->route('pacientes.index')->with('success', 'Paciente atualizado com sucesso.');
+        return redirect()->route('pacientes.show', $paciente->id)->with('success', 'Paciente atualizado com sucesso.');
     }
 
     /**
