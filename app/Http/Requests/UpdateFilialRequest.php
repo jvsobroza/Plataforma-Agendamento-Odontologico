@@ -23,7 +23,13 @@ class UpdateFilialRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "cidade" => "string|required",
+            "endereco" => "string|required",
+            "datas_agenda" => "array|required",
+            "datas_agenda.*" => "integer|between:0,6",
+            "servicos" => "array|required|min:1",
+            "servicos.*" => "integer|exists:servicos,id",
+            "ativo" => "boolean",
         ];
     }
 }

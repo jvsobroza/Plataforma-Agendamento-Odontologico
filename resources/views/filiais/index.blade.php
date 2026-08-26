@@ -75,7 +75,7 @@
                                 <div class="service-avatar">
                                     <i class="fas fa-cut"></i>
                                 </div>
-                                {{ $filial->servicos ?? 'Nenhum serviço' }} <!-- arrumar erro -->
+                                {{ $filial->servicosFilial->pluck('nome')->implode(', ') ?: 'Nenhum serviço' }} <!-- sem pluck não funciona, serve para pegar um atríbuto no array -->
                             </div>
                         </td>
                         <td class="text-center">

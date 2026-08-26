@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreFilialRequest;
 use App\Http\Requests\UpdateFilialRequest;
 use App\Models\Filial;
+use App\Models\Servico;
 
 class FilialController extends Controller
 {
@@ -13,7 +14,7 @@ class FilialController extends Controller
      */
     public function index()
     {
-        $filiais = Filial::with('servicos')->where('ativo', true)->get();
+        $filiais = Filial::with('servicosFilial')->where('ativo', true)->get();
         $diaSemana = [
             00 => 'Domingo',
             01 => 'Segunda-feira',
@@ -42,7 +43,9 @@ class FilialController extends Controller
      */
     public function create()
     {
-        return view('filiais.create');
+        $servicos = Servico::all();
+
+        return view('filiais.create', compact('servicos'));
     }
 
     /**
@@ -50,12 +53,12 @@ class FilialController extends Controller
      */
     public function store(StoreFilialRequest $request)
     {
-        $filial = Filial::create($request->validated());
-        if ($request->filled('servicos')) {
-            $servicos = explode(',', $request->servicos);
-            $filial->servicos()->attach($servicos);
-        } //faz insert na tabela pivo filial_servico
-        return redirect()->route('filiais.index')->with('success', 'Filial cadastrada com sucesso.');
+        $dados = $request->validated();
+        $dados['datas_agenda'] = implode(';', $dados['datas_agenda']);
+        $dados['servicos'] = implode(';', $dados['servicos']);
+        $filial = Filial::create($dados);
+        $filial->servicosFilial()->attach(explode(';', $dados['servicos'])); //insere na tabela pivot
+        return redirect()->route('dentista.filiais.index')->with('success', 'Filial cadastrada com sucesso.');
     }
 
     /**
@@ -73,7 +76,18 @@ class FilialController extends Controller
     public function edit(string $id)
     {
         $filial = Filial::findOrFail($id);
-        return view('filiais.edit', compact('filial'));
+        $servicos = Servico::all();
+        $servicosSelecionados = [];
+        foreach ($filial->servicosFilial as $servico) {
+            $servicosSelecionados[] = $servico->id;
+        }
+        $diasSelecionados = [];
+        if (!empty($filial->datas_agenda)) {
+            foreach (explode(';', $filial->datas_agenda) as $dia) {
+                $diasSelecionados[] = (int) $dia;
+            }
+        }
+        return view('filiais.edit', compact('filial', 'servicos', 'diasSelecionados', 'servicosSelecionados'));
     }
 
     /**
@@ -82,9 +96,13 @@ class FilialController extends Controller
     public function update(UpdateFilialRequest $request, string $id)
     {
         $filial = Filial::findOrFail($id);
-        $filial->update($request->validated());
-        $filial->servicos()->sync($request->servicos); //atualiza a tabela pivo filial_servico
-        return redirect()->route('filiais.index')->with('success', 'Filial atualizada com sucesso.');
+        $dados = $request->validated();
+        $servicos = $dados['servicos'];
+        $dados['datas_agenda'] = implode(';', $dados['datas_agenda']);
+        $dados['servicos'] = implode(';', $servicos);
+        $filial->update($dados);
+        $filial->servicosFilial()->sync($servicos);
+        return redirect()->route('dentista.filiais.index')->with('success', 'Filial atualizada com sucesso.');
     }
 
     /**
@@ -94,6 +112,6 @@ class FilialController extends Controller
     {
         $filial = Filial::findOrFail($id);
         $filial->update(['ativo' => false]);
-        return redirect()->route('filiais.index')->with('success', 'Filial desativada com sucesso.');
+        return redirect()->route('dentista.filiais.index')->with('success', 'Filial desativada com sucesso.');
     }
 }
