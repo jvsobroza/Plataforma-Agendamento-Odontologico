@@ -43,7 +43,7 @@ class FilialController extends Controller
      */
     public function create()
     {
-        $servicos = Servico::all();
+        $servicos = Servico::where('ativo', true)->get();
 
         return view('filiais.create', compact('servicos'));
     }
@@ -76,7 +76,7 @@ class FilialController extends Controller
     public function edit(string $id)
     {
         $filial = Filial::findOrFail($id);
-        $servicos = Servico::all();
+        $servicos = Servico::where('ativo', true)->get();
         $servicosSelecionados = [];
         foreach ($filial->servicosFilial as $servico) {
             $servicosSelecionados[] = $servico->id;
