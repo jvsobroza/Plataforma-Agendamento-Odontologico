@@ -20,7 +20,7 @@
 <div class="card mb-4">
     <div class="card-header d-flex justify-content-between align-items-center px-4 py-3">
         <div class="d-flex align-items-center gap-3">
-            <h5 class="mb-0"><i class="fas fa-list me-2" style="color:#c95c0a;"></i>Serviços</h5>
+            <h5 class="mb-0"><i class="bi bi-list-ul me-2"></i>Serviços</h5>
             <span class="badge badge-count">{{ count($servicos) }}</span>
         </div>
     </div>
@@ -40,31 +40,32 @@
                 <tbody>
                     @endif
                     <tr>
-                        <td class="ps-4" style="color:#c95c0a; font-weight:600;">{{ $loop->iteration }}</td>
+                        <td class="ps-4">{{ $loop->iteration }}</td>
                         <td>
                             <div class="d-flex align-items-center gap-3">
                                 <div class="service-avatar">
-                                    <i class="fas fa-cut"></i>
+                                    <i class="bi bi-briefcase"></i>
                                 </div>
                                 {{ $servico->nome }}
                             </div>
                         </td>
                         <td class="text-center">
-                            <form action="{{ route('dentista.servicos.update', $servico->id) }}"
-                                method="POST" class="d-inline">
-                                <div class="d-flex justify-content-center gap-2">
-                                    <a href="{{ route('dentista.servicos.edit', $servico->id) }}"
-                                        class="btn btn-outline-primary btn-sm" title="Editar">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
+                            <div class="d-flex justify-content-center gap-2">
+                                <a href="{{ route('dentista.servicos.edit', $servico->id) }}"
+                                    class="btn btn-outline-primary btn-sm" title="Editar">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+
+                                <form action="{{ route('dentista.servicos.destroy', $servico->id) }}"
+                                    method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-outline-danger btn-sm"
                                         onclick="return confirm('Excluir este serviço?')">
-                                        <i class="fas fa-trash"></i>
+                                        <i class="bi bi-trash"></i>
                                     </button>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     @if($loop->last)
@@ -74,7 +75,7 @@
         @endif
         @empty
         <div class="empty-state">
-            <i class="fas fa-cut"></i>
+            <i class="bi bi-briefcase"></i>
             <p>Nenhum serviço registrado</p>
         </div>
         @endforelse

@@ -17,12 +17,12 @@
 <div class="page-content container-fluid py-4">
 
     <a href="{{ route('dentista.servicos.index') }}" class="btn btn-outline-secondary mb-4">
-        <i class="fas fa-arrow-left me-1"></i> Voltar
+        <i class="bi bi-arrow-left me-1"></i> Voltar
     </a>
 
     <div class="mb-5">
-        <p class="mb-1" style="font-size:11px; letter-spacing:3px; color:#c95c0a; text-transform:uppercase;">Editar</p>
-        <h1><i class="fas fa-edit me-2" style="color:#c95c0a;"></i>{{ $servico->nome }}</h1>
+        <p class="mb-1" style="font-size:11px; letter-spacing:3px; color:var(--azul-principal); text-transform:uppercase;">Editar</p>
+        <h1><i class="bi bi-pencil-square me-2" style="color:var(--azul-principal);"></i>{{ $servico->nome }}</h1>
     </div>
 
     <div class="card" style="max-width: 480px;">
@@ -43,7 +43,7 @@
 
                 <div class="d-grid">
                     <button type="submit" class="btn btn-success">
-                        <i class="fas fa-save me-1"></i> Salvar Alterações
+                        <i class="bi bi-check-lg me-1"></i> Salvar Alterações
                     </button>
                 </div>
             </form>

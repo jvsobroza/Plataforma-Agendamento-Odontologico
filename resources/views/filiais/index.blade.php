@@ -20,7 +20,7 @@
 <div class="card mb-4">
     <div class="card-header d-flex justify-content-between align-items-center px-4 py-3">
         <div class="d-flex align-items-center gap-3">
-            <h5 class="mb-0"><i class="fas fa-list me-2"></i>Filiais</h5>
+            <h5 class="mb-0"><i class="bi bi-list-ul me-2"></i>Filiais</h5>
             <span class="badge badge-count">{{ count($filiais) }}</span>
         </div>
     </div>
@@ -47,7 +47,7 @@
                         <td>
                             <div class="d-flex align-items-center gap-3">
                                 <div class="service-avatar">
-                                    <i class="fas fa-cut"></i>
+                                    <i class="bi bi-building"></i>
                                 </div>
                                 {{ $filial->cidade }}
                             </div>
@@ -55,7 +55,7 @@
                         <td>
                             <div class="d-flex align-items-center gap-3">
                                 <div class="service-avatar">
-                                    <i class="fas fa-cut"></i>
+                                    <i class="bi bi-geo-alt"></i>
                                 </div>
                                 {{ $filial->endereco }}
                             </div>
@@ -63,7 +63,7 @@
                         <td>
                             <div class="d-flex align-items-center gap-3">
                                 <div class="service-avatar">
-                                    <i class="fas fa-cut"></i>
+                                    <i class="bi bi-calendar3"></i>
                                 </div>
                                 <div>
                                     {{ !empty($filial->dias_nomes) ? implode(', ', $filial->dias_nomes) : 'Nenhum dia definido' }}
@@ -73,7 +73,7 @@
                         <td>
                             <div class="d-flex align-items-center gap-3">
                                 <div class="service-avatar">
-                                    <i class="fas fa-cut"></i>
+                                    <i class="bi bi-briefcase"></i>
                                 </div>
                                 {{ $filial->servicosFilial->pluck('nome')->implode(', ') ?: 'Nenhum serviço' }} <!-- sem pluck não funciona, serve para pegar um atríbuto no array -->
                             </div>
@@ -82,7 +82,7 @@
                             <div class="d-flex justify-content-center gap-2">
                                 <a href="{{ route('dentista.filiais.edit', $filial->id) }}"
                                     class="btn btn-outline-primary btn-sm" title="Editar">
-                                    <i class="fas fa-edit"></i>
+                                    <i class="bi bi-pencil-square"></i>
                                 </a>
 
                                 <form action="{{ route('dentista.filiais.destroy', $filial->id) }}"
@@ -91,7 +91,7 @@
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-outline-danger btn-sm"
                                         onclick="return confirm('Excluir esta filial?')">
-                                        <i class="fas fa-trash"></i>
+                                        <i class="bi bi-trash"></i>
                                     </button>
                                 </form>
                             </div>
@@ -104,7 +104,7 @@
         @endif
         @empty
         <div class="empty-state">
-            <i class="fas fa-cut"></i>
+            <i class="bi bi-building"></i>
             <p>Nenhuma filial registrada</p>
         </div>
         @endforelse

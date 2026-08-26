@@ -17,7 +17,7 @@
 <div class="page-content container-fluid py-4">
 
     <a href="{{ route('dentista.filiais.index') }}" class="btn btn-outline-secondary mb-4">
-        <i class="fas fa-arrow-left me-1"></i> Voltar
+        <i class="bi bi-arrow-left me-1"></i> Voltar
     </a>
 
     <div class="card" style="max-width: 480px;">
@@ -97,7 +97,7 @@
 
                 <div class="d-grid">
                     <button type="submit" class="btn btn-success">
-                        <i class="fas fa-save me-1"></i> Criar Filial
+                        <i class="bi bi-check-lg me-1"></i> Criar Filial
                     </button>
                 </div>
             </form>
