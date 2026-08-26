@@ -24,7 +24,7 @@ class Filial extends Model
     {
         return $this->hasMany(Agendamento::class, 'id_filial');
     }
-    public function servicos()
+    public function servicosFilial()
     {
         return $this->belongsToMany(Servico::class, 'filial_servico', 'id_filial', 'id_servico');
     }
