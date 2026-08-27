@@ -47,7 +47,8 @@
                     <div class="mb-4">
                         <label for="senha" class="form-label">Senha</label>
                         <input type="password" class="form-control @error('senha') is-invalid @enderror" id="senha"
-                            name="senha"  minlength="6" maxlength="100" oninput="tamanhoMax(this); verificarMin(this)" required>
+                            name="senha" minlength="6" maxlength="100" oninput="tamanhoMax(this); verificarMin(this)"
+                            required>
                         @error('senha')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -81,7 +82,6 @@
         </div>
     </div>
 @endsection
-
 <script>
     function tamanhoMax(e) {
         if (e.value.length > e.maxLength)
@@ -114,13 +114,5 @@
                 alert("Preencha todos os campos corretamente!");
             }
         });
-    });
-    document.addEventListener('DOMContentLoaded', function () {
-        const cpfInput = document.getElementById('cpf');
-        if (cpfInput) {
-            cpfInput.addEventListener('input', function (e) {
-                e.target.value = e.target.value.replace(/[^0-9]/g, '');
-            });
-        }
     });
 </script>

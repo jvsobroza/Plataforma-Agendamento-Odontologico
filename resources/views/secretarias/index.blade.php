@@ -20,7 +20,7 @@
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center px-4 py-3">
             <div class="d-flex align-items-center gap-3">
-                <h5 class="mb-0"><i class="bi bi-people-fill me-2"></i>Secretárias</h5>
+                <h5 class="mb-0"><i class="bi bi-list-ul me-2"></i>Secretárias</h5>
                 <span class="badge badge-count">{{ count($secretaria) }}</span>
             </div>
         </div>
@@ -32,7 +32,8 @@
                         <table class="table mb-0">
                             <thead>
                                 <tr>
-                                    <th class="ps-4">Nome</th>
+                                    <th class="ps-4">#</th>
+                                    <th>Nome</th>
                                     <th>E-mail</th>
                                     <th>Filial</th>
                                     <th class="text-center">Ações</th>
@@ -41,9 +42,31 @@
                             <tbody>
                 @endif
                             <tr>
-                                <td class="ps-4"><strong>{{ $user->nome }}</strong></td>
-                                <td>{{ $user->email }}</td>
-                                <td>{{ $user->filial->cidade ?? 'Não especificada' }}</td>
+                                <td class="ps-4">{{ $loop->iteration }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="service-avatar">
+                                            <i class="bi bi-person"></i>
+                                        </div>
+                                        <strong>{{ $user->nome }}</strong>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="service-avatar">
+                                            <i class="bi bi-envelope"></i>
+                                        </div>
+                                        {{ $user->email }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="service-avatar">
+                                            <i class="bi bi-building"></i>
+                                        </div>
+                                        {{ $user->filial->cidade ?? 'Não especificada' }}
+                                    </div>
+                                </td>
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center gap-2">
                                         <a href="{{ route('dentista.secretarias.edit', $user->id) }}"
@@ -78,7 +101,7 @@
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center px-4 py-3">
             <div class="d-flex align-items-center gap-3">
-                <h5 class="mb-0"><i class="bi bi-people-fill me-2"></i>Secretárias Desativadas</h5>
+                <h5 class="mb-0"><i class="bi bi-list-ul me-2"></i>Secretárias Desativadas</h5>
                 <span class="badge badge-count">{{ count($secretariaDesativada) }}</span>
             </div>
         </div>
@@ -89,7 +112,8 @@
                         <table class="table mb-0">
                             <thead>
                                 <tr>
-                                    <th class="ps-4">Nome</th>
+                                    <th class="ps-4">#</th>
+                                    <th>Nome</th>
                                     <th>E-mail</th>
                                     <th>Filial</th>
                                     <th class="text-center">Ações</th>
@@ -98,9 +122,31 @@
                             <tbody>
                 @endif
                             <tr>
-                                <td class="ps-4"><strong>{{ $user->nome }}</strong></td>
-                                <td>{{ $user->email }}</td>
-                                <td>{{ $user->filial->cidade ?? 'Não especificada' }}</td>
+                                <td class="ps-4">{{ $loop->iteration }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="service-avatar">
+                                            <i class="bi bi-person"></i>
+                                        </div>
+                                        <strong>{{ $user->nome }}</strong>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="service-avatar">
+                                            <i class="bi bi-envelope"></i>
+                                        </div>
+                                        {{ $user->email }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="service-avatar">
+                                            <i class="bi bi-building"></i>
+                                        </div>
+                                        {{ $user->filial->cidade ?? 'Não especificada' }}
+                                    </div>
+                                </td>
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center gap-2">
                                         <a href="{{ route('dentista.secretarias.edit', $user->id) }}"
@@ -111,8 +157,8 @@
                                             class="d-inline">
                                             @csrf
                                             @method('PATCH')
-                                            <button type="submit" class="btn btn-outline-success btn-sm"
-                                                title="Reativar" onclick="return confirm('Deseja reativar esta secretária?')">
+                                            <button type="submit" class="btn btn-outline-success btn-sm" title="Reativar"
+                                                onclick="return confirm('Deseja reativar esta secretária?')">
                                                 <i class="bi bi-person-check-fill"></i>
                                             </button>
                                         </form>
@@ -131,6 +177,5 @@
                 </div>
             @endforelse
         </div>
-    </div>
     </div>
 @endsection
