@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -23,7 +24,15 @@ class UpdateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "nome" => "required|string",
+            "email" => [
+                "required",
+                "email",
+                Rule::unique('usuarios', 'email')->ignore($this->route('secretaria')), //usado para ignorar o email atual
+            ],
+            "senha" => "nullable|string|min:6",
+            "tipo" => "required|integer|in:1,2",
+            "id_filial" => "required|integer|exists:filials,id",
         ];
     }
 }

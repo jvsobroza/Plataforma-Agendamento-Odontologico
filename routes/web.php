@@ -7,6 +7,7 @@ use App\Http\Controllers\PlanoTratamentoController;
 use App\Http\Controllers\ServicoController;
 use App\Http\Controllers\ServicoTratamentoController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SecretariaController;
 use App\Http\Middleware\CheckDentista;
 use App\Http\Middleware\CheckSecretaria;
 use Illuminate\Http\Request;
@@ -27,7 +28,7 @@ Route::post('/login', function (Request $request) {
         'senha' => ['required'],
     ]);
     $credentials = [
-        'email'    => $request->email,
+        'email' => $request->email,
         'password' => $request->senha,
     ];
 
@@ -61,7 +62,9 @@ Route::middleware([CheckDentista::class])->prefix('dentista')->name('dentista.')
     Route::resource('planos-tratamento', PlanoTratamentoController::class);
     Route::resource('servicos', ServicoController::class);
     Route::resource('servicos-tratamento', ServicoTratamentoController::class);
-    Route::resource('secretarias', UserController::class);
+    Route::resource('secretarias', SecretariaController::class);
+    Route::patch('secretarias/{id}/restore', [SecretariaController::class, 'restore'])
+        ->name('secretarias.restore');
 });
 
 Route::middleware(['auth'])->group(function () {
