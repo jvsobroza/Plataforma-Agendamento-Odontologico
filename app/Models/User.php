@@ -25,7 +25,7 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'password' => 'hashed',
+            'senha' => 'hashed',
         ];
     }
     protected $table = 'usuarios';
