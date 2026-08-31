@@ -116,7 +116,7 @@
   </div>
 
 </div>
-<!-- modal, pego do site Alecrim Platters https://github.com/jvsobroza/Alecrim-Platter-Website-->
+<!-- modal, pego do site Alecrim Platters https://github.com/jvsobroza/Alecrim-Platter-Website -->
 <dialog id="modalAgendamento" class="modal-sante">
   <div class="modal-content">
     <button type="button" class="btn-fechar" onclick="fecharModalAgendamento()">&times;</button>
