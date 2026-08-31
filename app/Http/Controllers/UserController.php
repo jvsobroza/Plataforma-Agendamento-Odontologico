@@ -68,13 +68,29 @@ class UserController extends Controller
             if ($servicoTratamento && $servicoTratamento->servico) {
                 $servico = $servicoTratamento->servico->nome;
             }
-
+            $ultimaConsulta = Agendamento::with('servicoTratamentos.servico')
+                ->where('id_paciente', $ag->id_paciente)
+                ->where('id', '!=', $ag->id)
+                ->where('data_hora', '<', $ag->data_hora)
+                ->where('ativo', true)
+                ->orderBy('data_hora', 'desc')
+                ->first();
+            $ultimaTexto = 'Paciente novo - sem histórico';
+            if ($ultimaConsulta) {
+                $ultimoServicoModel = $ultimaConsulta->servicoTratamentos->first();
+                $nomeUltimoServico = ($ultimoServicoModel && $ultimoServicoModel->servico)
+                    ? $ultimoServicoModel->servico->nome
+                    : 'Consulta';
+                $ultimaTexto = $ultimaConsulta->data_hora->format('d/m/Y') . ' - ' . $nomeUltimoServico;
+            }
             $agendaHoje[] = [
-                'id' => $ag->id,
-                'hora' => $ag->data_hora->format('H:i'),
-                'paciente' => $paciente,
-                'servico' => $servico,
-                'status' => $status,
+                'id'              => $ag->id,
+                'hora'            => $ag->data_hora->format('H:i'),
+                'paciente'        => $paciente,
+                'servico'         => $servico,
+                'status'          => $status,
+                'filial'          => $f->cidade,
+                'ultima_consulta' => $ultimaTexto,
             ];
         } //parte da direita, próximos agendamentos
         $agendamentosProximos = Agendamento::with('paciente', 'servicoTratamentos.servico')

@@ -69,6 +69,7 @@ class AgendamentoController extends Controller
     {
         $agendamento = Agendamento::findOrFail($agendamento->id);
         $agendamento->update(['ativo' => false]);
-        return redirect()->route('agendamentos.index')->with('success', 'Agendamento desativado com sucesso.');
+        $agendamento->update(['status' => 'cancelado']);
+        return redirect()->route('dentista.index')->with('success', 'Agendamento desativado com sucesso.');
     }
 }
