@@ -16,7 +16,7 @@
         <span>Dashboard</span>
       </a>
       @else
-      <a href="{{ route('secretaria.index') }}" class="sidebar-link {{ request()->routeIs('secretaria.index') ? 'active' : '' }}">
+      <a href="{{ route('secretaria.dashboard') }}" class="sidebar-link {{ request()->routeIs('secretaria.dashboard') ? 'active' : '' }}">
         <i class="bi bi-grid-fill"></i>
         <span>Dashboard</span>
       </a>

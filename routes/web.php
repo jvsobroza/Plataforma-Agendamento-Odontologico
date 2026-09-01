@@ -73,9 +73,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware([CheckSecretaria::class])->prefix('secretaria')->name('secretaria.')->group(function () {
-    Route::get('/', function () {
-        return view('secretaria.index');
-    })->name('index');
+    Route::get('/', [UserController::class, 'index2'])->name('dashboard');
 
     Route::resource('pacientes', PacienteController::class)->only(['index', 'show', 'edit', 'update']);
     Route::resource('secretarias', UserController::class)->only(['show', 'edit', 'update']);
