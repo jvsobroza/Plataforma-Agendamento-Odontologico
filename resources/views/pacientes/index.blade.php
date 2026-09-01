@@ -25,6 +25,10 @@
         </div>
     </div>
 
+    <div class="card-body border-bottom px-4 py-3">
+        <input type="text" id="buscarCPF" class="form-control" placeholder="Buscar por CPF..." maxlength="14">
+    </div>
+
     <div class="card-body p-0">
         @forelse($pacientes as $paciente)
         @if($loop->first)
@@ -93,4 +97,20 @@
         @endforelse
     </div>
 </div>
+
+<script>
+    const campoBusca = document.getElementById('buscarCPF');
+    const todasAsLinhas = document.querySelectorAll('tbody tr');
+    campoBusca.addEventListener('keyup', function() {
+        const textoBuscado = this.value;
+        todasAsLinhas.forEach(linha => {
+            const cpfDaLinha = linha.querySelector('td:nth-child(3)').textContent; //pega conteúdo terceira coluna
+            if (cpfDaLinha.includes(textoBuscado)) {
+                linha.style.display = '';
+            } else {
+                linha.style.display = 'none';
+            }
+        });
+    });
+</script>
 @endsection
