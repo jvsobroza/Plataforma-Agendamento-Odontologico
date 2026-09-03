@@ -249,6 +249,10 @@ body {
     background-color: #b0b0b0;
     color: #fff;
 }
+.badge-status.cancelado {
+    background-color: #ff0000;
+    color: #fcfcfc;
+}
 
 .agenda-chevron {
     color: var(--azul-principal);
@@ -1048,4 +1052,32 @@ dialog.modal-sante {
 .btn-cancelar {
     background-color: #ffcdd2;
     color: #e53935;
+}
+#calendar {
+    max-width: 100%;
+}
+.fc .fc-toolbar-title {
+    color: var(--azul-principal);
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+.fc .fc-button-primary {
+    background-color: var(--azul-principal);
+    border-color: var(--azul-principal);
+}
+.fc .fc-button-primary:hover {
+    background-color: var(--azul-hover);
+    border-color: var(--azul-hover);
+}
+.fc .fc-button-primary:disabled {
+    background-color: #b9c2d6;
+    border-color: #b9c2d6;
+}
+.fc-event {
+    cursor: pointer;
+    border: none;
+    padding: 2px 4px;
+}
+.fc-daygrid-day.fc-day-today {
+    background-color: #eef3fc;
 }

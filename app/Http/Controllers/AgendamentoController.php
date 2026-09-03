@@ -14,7 +14,7 @@ class AgendamentoController extends Controller
      */
     public function index()
     {
-        $agendamentos = Agendamento::with(['paciente', 'filial'])->get();
+        $agendamentos = Agendamento::with(['paciente', 'filial', 'servicoTratamentos.servico'])->get();
         return view("agendamentos.index", compact("agendamentos"));
     }
 
