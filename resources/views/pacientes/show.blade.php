@@ -220,7 +220,8 @@
 
                             <tr
                                 class="appointment-row"
-                                onclick="window.location='{{ route('agendamentos.show', $agendamento->id) }}'">
+                                data-url="{{ route('agendamentos.show', $agendamento->id) }}"
+                                onclick="window.location.href = this.dataset.url">
                                 <td>
                                     <div class="appointment-date">
                                         <strong>
@@ -289,15 +290,66 @@
                     <small>Crie um plano para organizar os serviços e procedimentos do paciente.</small>
                 </div>
                 @else
-                <div class="p-4">
-                    <div class="alert alert-primary mb-0 d-flex align-items-center gap-2">
-                        <i class="bi bi-clipboard2-check fs-5"></i>
-                        <span>
-                            Existem {{ $paciente->planos->count() }}
-                            {{ $paciente->planos->count() == 1 ? 'plano registrado' : 'planos registrados' }}
-                            para este paciente.
-                        </span>
-                    </div>
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-4">Plano</th>
+                                <th>Status</th>
+                                <th>Serviços planejados</th>
+                                <th>Serviços concluídos</th>
+                                <th>Situação</th>
+                                <th class="text-end pe-4">Criado em</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($paciente->planos->sortBy([
+                            ['ativo', 'desc'],
+                            ['created_at', 'desc'],
+                            ]) as $plano)
+                            <tr
+                                class="appointment-row"
+                                data-url="{{ route('dentista.planos-tratamento.show', $plano->id) }}"
+                                onclick="window.location.href = this.dataset.url">
+                                @php
+                                $statusClass = [
+                                'Concluído' => 'status-success',
+                                'Cancelado' => 'status-danger',
+                                'Em andamento' => 'status-info',
+                                ][$plano->status] ?? 'status-warning';
+                                @endphp
+                                <td class="ps-4 fw-semibold">#{{ $plano->id }}</td>
+                                <td>
+                                    <span class="custom-status-badge {{ $statusClass }}">{{ $plano->status }}</span>
+                                </td>
+                                <td>
+                                    @forelse (array_filter(explode(',', $plano->servicos_planejados ?? '')) as $servico)
+                                    @php $partesServico = explode(';', $servico, 2); @endphp
+                                    <span>{{ trim($partesServico[1]) }}</span>@unless ($loop->last), @endunless
+                                    @empty
+                                    Nenhum serviço planejado
+                                    @endforelse
+                                </td>
+                                <td>
+                                    @forelse (array_filter(explode(',', $plano->servicos_concluidos ?? '')) as $servico)
+                                    @php $partesServico = explode(';', $servico, 2); @endphp
+                                    <span>{{ trim($partesServico[1]) }}</span>@unless ($loop->last), @endunless
+                                    @empty
+                                    Nenhum serviço concluído
+                                    @endforelse
+                                </td>
+                                <td>
+                                    <span class="custom-status-badge {{ $plano->ativo ? 'status-success' : 'status-danger' }}">
+                                        {{ $plano->ativo ? 'Ativo' : 'Inativo' }}
+                                    </span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    {{ $plano->created_at?->format('d/m/Y') }}
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
                 @endif
             </section>

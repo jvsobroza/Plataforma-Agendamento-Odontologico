@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePacienteRequest;
 use App\Http\Requests\UpdatePacienteRequest;
 use App\Models\Paciente;
+use App\Models\Servico;
 use Illuminate\Http\Request;
 
 class PacienteController extends Controller
@@ -64,6 +65,24 @@ class PacienteController extends Controller
     public function show(Paciente $paciente)
     {
         $paciente = Paciente::with(['planos', 'agendamentos'])->findOrFail($paciente->id);
+        $servicos = Servico::all();
+        foreach ($paciente->planos as $plano) {
+            $idPlanejados = array_filter(explode(',', $plano->servicos_planejados ?? ''));
+            $idConcluidos = array_filter(explode(',', $plano->servicos_concluidos ?? ''));
+            $servicosPlanejados = [];
+            $servicosConcluidos = [];
+            foreach ($servicos as $servico) {
+                if (in_array($servico->id, $idPlanejados)) {
+                    $servicosPlanejados[] = $servico->id . ';' . $servico->nome;
+                }
+                if (in_array($servico->id, $idConcluidos)) {
+                    $servicosConcluidos[] = $servico->id . ';' . $servico->nome;
+                }
+            }
+            $plano->servicos_planejados = implode(', ', $servicosPlanejados);
+            $plano->servicos_concluidos = implode(', ', $servicosConcluidos);
+        }
+
         return view('pacientes.show', compact('paciente'));
     }
 

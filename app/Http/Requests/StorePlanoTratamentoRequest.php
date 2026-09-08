@@ -24,10 +24,9 @@ class StorePlanoTratamentoRequest extends FormRequest
     {
         return [
             "id_paciente" => "required|integer|exists:pacientes,id",
-            "status"=> "required|string",
-            "servicos_planejados"=> "required|string",
-            "servicos_realizados"=> "required|string",
-            "ativo"=> "boolean",
+            "status" => "required|string|in:Em andamento,Concluído,Cancelado",
+            "servicos_planejados" => "required|array|min:1",
+            "servicos_planejados.*" => "integer|distinct|exists:servicos,id",
         ];
     }
 }

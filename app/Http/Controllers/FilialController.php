@@ -44,7 +44,6 @@ class FilialController extends Controller
     public function create()
     {
         $servicos = Servico::where('ativo', true)->get();
-
         return view('filiais.create', compact('servicos'));
     }
 

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePlanoTratamentoRequest;
 use App\Http\Requests\UpdatePlanoTratamentoRequest;
+use App\Models\Paciente;
 use App\Models\PlanoTratamento;
+use App\Models\Servico;
 use Illuminate\Http\Request;
 
 class PlanoTratamentoController extends Controller
@@ -21,9 +23,14 @@ class PlanoTratamentoController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        return view("plano-tratamento.create");
+        $dados = $request->validate([
+            'paciente_id' => 'required|integer|exists:pacientes,id',
+        ]);
+        $paciente = Paciente::where('ativo', true)->findOrFail($dados['paciente_id']);
+        $servicos = Servico::where('ativo', true)->get();
+        return view("planos-tratamento.create", compact("paciente", "servicos"));
     }
 
     /**
@@ -31,17 +38,21 @@ class PlanoTratamentoController extends Controller
      */
     public function store(StorePlanoTratamentoRequest $request)
     {
-        $planoTratamento = PlanoTratamento::create($request->validated());
-        return redirect()->route('plano-tratamento.index')->with('success', 'Plano de Tratamento cadastrado com sucesso.');
+        $dados = $request->validated();
+        $dados['servicos_planejados'] = implode(',', $dados['servicos_planejados']);
+        $dados['servicos_concluidos'] = null;
+        PlanoTratamento::create($dados);
+        return redirect()->route('pacientes.show', ['paciente' => $dados['id_paciente']])
+            ->with('success', 'Plano de Tratamento cadastrado com sucesso.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(PlanoTratamento $planoTratamento)
+    public function show($id)
     {
-        $planoTratamento = PlanoTratamento::with(['paciente'])->findOrFail($planoTratamento->id);
-        return view('plano-tratamento.show', compact('planoTratamento'));
+        $planoTratamento = PlanoTratamento::with(['paciente'])->findOrFail($id);
+        return view('planos-tratamento.show', compact('planoTratamento'));
     }
 
     /**

@@ -17,7 +17,7 @@ class PlanoTratamento extends Model
 
     public function paciente()
     {
-        return $this->hasOne(Paciente::class, 'id_paciente');
+        return $this->belongsTo(Paciente::class, 'id_paciente');
     }
 
     public function servicoTratamentos(){
