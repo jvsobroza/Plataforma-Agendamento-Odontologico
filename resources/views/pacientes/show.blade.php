@@ -281,12 +281,15 @@
                             {{ $paciente->planos->count() == 1 ? 'plano' : 'planos' }}
                         </span>
 
+                        @if (auth()->user()->tipo == 1)
                         <a
                             href="{{ route('dentista.planos-tratamento.create', ['paciente_id' => $paciente->id]) }}"
                             class="btn btn-brand btn-sm">
                             <i class="bi bi-plus-lg"></i>
                             Novo plano
                         </a>
+                        @endif
+
                     </div>
                 </div>
 
