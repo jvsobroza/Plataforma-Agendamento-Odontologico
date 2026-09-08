@@ -29,7 +29,7 @@
       </a>
     </li>
     <li>
-      <a href="{{ route('pacientes.index') }}" class="sidebar-link {{ request()->routeIs('pacientes.*') ? 'active' : '' }}">
+      <a href="{{ route('pacientes.index') }}" class="sidebar-link {{ request()->routeIs('pacientes.*', 'dentista.planos-tratamento.*') ? 'active' : '' }}">
         <i class="bi bi-person"></i>
         <span>Pacientes</span>
       </a>

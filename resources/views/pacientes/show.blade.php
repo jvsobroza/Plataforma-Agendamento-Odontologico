@@ -275,12 +275,19 @@
                         <h5 class="mb-0">Planos de tratamento</h5>
                     </div>
 
-                    <a
-                        href="{{ route('dentista.planos-tratamento.create', ['paciente_id' => $paciente->id]) }}"
-                        class="btn btn-brand btn-sm">
-                        <i class="bi bi-plus-lg"></i>
-                        Novo plano
-                    </a>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge-count">
+                            {{ $paciente->planos->count() }}
+                            {{ $paciente->planos->count() == 1 ? 'plano' : 'planos' }}
+                        </span>
+
+                        <a
+                            href="{{ route('dentista.planos-tratamento.create', ['paciente_id' => $paciente->id]) }}"
+                            class="btn btn-brand btn-sm">
+                            <i class="bi bi-plus-lg"></i>
+                            Novo plano
+                        </a>
+                    </div>
                 </div>
 
                 @if($paciente->planos->isEmpty())
@@ -291,7 +298,7 @@
                 </div>
                 @else
                 <div class="table-responsive">
-                    <table class="table align-middle mb-0">
+                    <table class="table patient-appointments-table align-middle mb-0">
                         <thead>
                             <tr>
                                 <th class="ps-4">Plano</th>
@@ -299,7 +306,8 @@
                                 <th>Serviços planejados</th>
                                 <th>Serviços concluídos</th>
                                 <th>Situação</th>
-                                <th class="text-end pe-4">Criado em</th>
+                                <th>Criado em</th>
+                                <th class="text-end pe-4"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -318,7 +326,12 @@
                                 'Em andamento' => 'status-info',
                                 ][$plano->status] ?? 'status-warning';
                                 @endphp
-                                <td class="ps-4 fw-semibold">#{{ $plano->id }}</td>
+                                <td class="ps-4">
+                                    <span class="fw-semibold">
+                                        <i class="bi bi-clipboard2-check me-1"></i>
+                                        #{{ $plano->id }}
+                                    </span>
+                                </td>
                                 <td>
                                     <span class="custom-status-badge {{ $statusClass }}">{{ $plano->status }}</span>
                                 </td>
@@ -343,8 +356,11 @@
                                         {{ $plano->ativo ? 'Ativo' : 'Inativo' }}
                                     </span>
                                 </td>
-                                <td class="text-end pe-4">
+                                <td>
                                     {{ $plano->created_at?->format('d/m/Y') }}
+                                </td>
+                                <td class="text-end pe-4">
+                                    <i class="bi bi-chevron-right appointment-chevron"></i>
                                 </td>
                             </tr>
                             @endforeach

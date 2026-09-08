@@ -22,7 +22,7 @@
 
     <div class="mb-5">
         <p class="mb-1" style="font-size:11px; letter-spacing:3px; color:var(--azul-principal); text-transform:uppercase;">Novo Plano de Tratamento:</p>
-        <h1><i class="bi bi-person-plus me-2" style="color:var(--azul-principal);"></i>Cadastrar Plano de Tratamento</h1>
+        <h1><i class="bi bi-clipboard2-plus me-2" style="color:var(--azul-principal);"></i>Cadastrar Plano de Tratamento</h1>
     </div>
 
     @if ($errors->any())
@@ -35,21 +35,21 @@
     </div>
     @endif
 
-    <div class="card" style="max-width: 640px;">
+    <div class="card" style="max-width: 480px;">
         <div class="card-body p-4">
             <form action="{{ route('dentista.planos-tratamento.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="id_paciente" value="{{ $paciente->id }}">
-                <div class="mb-3">
-                    <span class="detail-label">Paciente</span>
+                <div class="mb-4">
+                    <span class="form-label d-block">Paciente</span>
                     <div class="form-control bg-light">{{ $paciente->nome }}</div>
                 </div>
                 <input type="hidden" name="status" value="Em andamento">
-                <div class="mb-3">
-                    <label class="detail-label">Serviços planejados</label>
+                <div class="mb-4">
+                    <span class="form-label d-block">Serviços planejados</span>
                     <div class="border rounded p-3 @error('servicos_planejados') border-danger @enderror">
                         @forelse ($servicos as $servico)
-                        <div class="form-check mb-2">
+                        <div class="form-check">
                             <input type="checkbox" name="servicos_planejados[]" value="{{ $servico->id }}"
                                 id="servico-{{ $servico->id }}" class="form-check-input"
                                 @checked(in_array($servico->id, old('servicos_planejados', [])))>
@@ -60,17 +60,17 @@
                         @endforelse
                     </div>
                     @error('servicos_planejados')
-                    <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror
                 </div>
 
-                <div class="d-flex gap-2 mt-4">
-                    <a href="{{ url()->previous() }}" class="btn btn-outline-secondary flex-fill">
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-lg me-1"></i> Criar Plano de Tratamento
+                    </button>
+                    <a href="{{ url()->previous() }}" class="btn btn-outline-secondary">
                         Cancelar
                     </a>
-                    <button type="submit" class="btn btn-primary flex-fill">
-                        <i class="bi bi-check-lg me-1"></i> Cadastrar
-                    </button>
                 </div>
 
             </form>
