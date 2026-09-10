@@ -61,6 +61,9 @@
             </div>
 
             <div class="modal-footer" style="border-top: 1px solid #EEF1F6;">
+                <a href="#" id="modalVerLink" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-eye me-1"></i> Visualizar agendamento
+                </a>
                 <a href="#" id="modalConfirmarLink" class="btn btn-success btn-sm">
                     <i class="bi bi-check-lg me-1"></i> Confirmar agendamento
                 </a>
@@ -178,10 +181,13 @@
                 const status = String(props.status || '').trim().toLowerCase();
                 const statusLabel = String(props.statusLabel || '').trim().toLowerCase();
                 statusEl.className = 'badge-status ' + status;
+                const verLink = document.getElementById('modalVerLink');
                 const confirmarLink = document.getElementById('modalConfirmarLink');
                 const editarLink = document.getElementById('modalEditarLink');
                 const excluirForm = document.getElementById('modalExcluirForm');
                 const agendamentoCancelado = status.includes('cancelado') || statusLabel.includes('cancelado');
+
+                verLink.href = `/agendamentos/${props.id}`;
 
                 if (agendamentoCancelado) {
                     confirmarLink.style.setProperty('display', 'none', 'important');

@@ -23,7 +23,13 @@ class UpdateAgendamentoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "id_paciente" => "required|integer|exists:pacientes,id",
+            "id_filial" => "required|integer|exists:filials,id",
+            "data_hora" => "required|date|after_or_equal:today",
+            "status_pagamento" => "required|string",
+            "status_agendamento" => "required|string",
+            "ativo" => "boolean",
+            "observacoes" => "nullable|string",
         ];
     }
 }

@@ -28,10 +28,9 @@ class StoreAgendamentoRequest extends FormRequest
             "data_hora"=> "required|date|after_or_equal:today",
             "status_pagamento"=> "required|string",
             "status_agendamento"=> "required|string",
-            "parecer_clinico" => "required|string",
-            "origem_agendamento"=> "required|string|in:1,2",
             "ativo" => "boolean",
-            "observacoes"=> "required|string",
+            "observacoes"=> "nullable|string",
         ];
     }
+
 }

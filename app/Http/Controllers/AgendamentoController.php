@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreAgendamentoRequest;
 use App\Http\Requests\UpdateAgendamentoRequest;
 use App\Models\Agendamento;
+use App\Models\Filial;
+use App\Models\Paciente;
 use Illuminate\Http\Request;
 
 class AgendamentoController extends Controller
@@ -23,7 +25,10 @@ class AgendamentoController extends Controller
      */
     public function create()
     {
-        return view("agendamentos.create");
+        $pacientes = Paciente::where('ativo', true)->orderBy('nome')->get();
+        $filiais = Filial::where('ativo', true)->orderBy('cidade')->get();
+
+        return view('agendamentos.create', compact('pacientes', 'filiais'));
     }
 
     /**
@@ -31,7 +36,13 @@ class AgendamentoController extends Controller
      */
     public function store(StoreAgendamentoRequest $request)
     {
-        $agendamento = Agendamento::create($request->validated());
+        $agendamento = $request->validated();
+        $horarioAgendado = $agendamento['data_hora'];
+        if (Agendamento::where('data_hora', $horarioAgendado)->exists() && $agendamento['status_agendamento'] != 'cancelado' && $agendamento['id_filial'] == $request->id_filial) {
+            return redirect()->back()->withErrors(['data_hora' => 'O horário selecionado já está agendado. Por favor, escolha outro horário.'])->withInput();
+        } else {
+            Agendamento::create($agendamento);
+        }
         return redirect()->route('agendamentos.index')->with('success', 'Agendamento cadastrado com sucesso.');
     }
 
@@ -40,7 +51,11 @@ class AgendamentoController extends Controller
      */
     public function show(Agendamento $agendamento)
     {
-        $agendamento = Agendamento::with(['paciente', 'filial'])->findOrFail($agendamento->id);
+        $agendamento = Agendamento::with([
+            'paciente',
+            'filial',
+            'servicoTratamentos.servico',
+        ])->findOrFail($agendamento->id);
         return view('agendamentos.show', compact('agendamento'));
     }
 
@@ -50,7 +65,16 @@ class AgendamentoController extends Controller
     public function edit(Agendamento $agendamento)
     {
         $agendamento = Agendamento::with(['paciente', 'filial'])->findOrFail($agendamento->id);
-        return view('agendamentos.edit', compact('agendamento'));
+        $pacientes = Paciente::where(function ($query) use ($agendamento) {
+            $query->where('ativo', true)
+                ->orWhere('id', $agendamento->id_paciente);
+        })->orderBy('nome')->get();
+        $filiais = Filial::where('ativo', true)
+            ->orWhere('id', $agendamento->id_filial)
+            ->orderBy('cidade')
+            ->get();
+
+        return view('agendamentos.edit', compact('agendamento', 'pacientes', 'filiais'));
     }
 
     /**
@@ -70,10 +94,6 @@ class AgendamentoController extends Controller
         $agendamento = Agendamento::findOrFail($agendamento->id);
         $agendamento->update(['ativo' => false]);
         $agendamento->update(['status_agendamento' => 'cancelado']);
-        if (auth()->user()->tipo == 1) {
-            return redirect()->route('dentista.index')->with('success', 'Agendamento desativado com sucesso.');
-        } else {
-            return redirect()->route('secretaria.dashboard')->with('success', 'Agendamento desativado com sucesso.');
-        }
+        return redirect()->back()->with('success', 'Agendamento desativado com sucesso.');
     }
 }
