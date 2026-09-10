@@ -61,6 +61,9 @@
             </div>
 
             <div class="modal-footer" style="border-top: 1px solid #EEF1F6;">
+                <a href="#" id="modalConfirmarLink" class="btn btn-success btn-sm">
+                    <i class="bi bi-check-lg me-1"></i> Confirmar agendamento
+                </a>
                 <a href="#" id="modalEditarLink" class="btn btn-outline-primary btn-sm">
                     <i class="bi bi-pencil-square me-1"></i> Editar
                 </a>
@@ -83,7 +86,6 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.11/index.global.min.css" rel="stylesheet">
 @endpush
 
-@push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.11/index.global.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -143,7 +145,7 @@
             locale: 'pt-br',
             height: 'auto',
             slotMinTime: '08:30:00',
-            slotMaxTime: '18:30:00',
+            slotMaxTime: '19:00:00',
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
@@ -158,12 +160,7 @@
             events: eventos,
             eventClick: function(info) {
                 const props = info.event.extendedProps;
-                document.getElementById('modalAvatar').textContent = props.paciente
-                    .split(' ')
-                    .map(p => p[0])
-                    .slice(0, 2)
-                    .join('')
-                    .toUpperCase();
+                document.getElementById('modalAvatar').textContent = props.paciente.charAt(0).toUpperCase();
                 document.getElementById('modalPaciente').textContent = props.paciente;
                 document.getElementById('modalServico').textContent = props.servico;
                 document.getElementById('modalHorario').textContent =
@@ -178,9 +175,26 @@
                 document.getElementById('modalObservacoes').textContent = props.observacoes;
                 const statusEl = document.getElementById('modalStatus');
                 statusEl.textContent = props.statusLabel;
-                statusEl.className = 'badge-status ' + props.status;
-                document.getElementById('modalEditarLink').href = `/agendamentos/${props.id}/edit`;
-                document.getElementById('modalExcluirForm').action = `/agendamentos/${props.id}`;
+                const status = String(props.status || '').trim().toLowerCase();
+                const statusLabel = String(props.statusLabel || '').trim().toLowerCase();
+                statusEl.className = 'badge-status ' + status;
+                const confirmarLink = document.getElementById('modalConfirmarLink');
+                const editarLink = document.getElementById('modalEditarLink');
+                const excluirForm = document.getElementById('modalExcluirForm');
+                const agendamentoCancelado = status.includes('cancelado') || statusLabel.includes('cancelado');
+
+                if (agendamentoCancelado) {
+                    confirmarLink.style.setProperty('display', 'none', 'important');
+                    editarLink.style.setProperty('display', 'none', 'important');
+                    excluirForm.style.setProperty('display', 'none', 'important');
+                } else {
+                    confirmarLink.style.removeProperty('display');
+                    editarLink.style.removeProperty('display');
+                    excluirForm.style.removeProperty('display');
+                    confirmarLink.href = `{{ route('dentista.servicos-tratamento.create') }}?id_agendamento=${props.id}`;
+                    editarLink.href = `/agendamentos/${props.id}/edit`;
+                    excluirForm.action = `/agendamentos/${props.id}`;
+                }
 
                 new bootstrap.Modal(document.getElementById('agendamentoModal')).show();
             },
@@ -189,4 +203,3 @@
         calendar.render();
     });
 </script>
-@endpush
