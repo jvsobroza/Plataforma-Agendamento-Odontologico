@@ -14,7 +14,7 @@
 
 @section('content')
 <div class="container-fluid py-4">
-    <a href="{{ route('agendamentos.index') }}" class="btn btn-outline-secondary mb-4">
+    <a href="{{ url()->previous() }}" class="btn btn-outline-secondary mb-4">
         <i class="bi bi-arrow-left me-1"></i> Voltar
     </a>
 

@@ -63,7 +63,7 @@
                             class="form-select @error('id_filial') is-invalid @enderror" required>
                             <option value="">Selecione uma filial</option>
                             @foreach ($filiais as $filial)
-                            <option value="{{ $filial->id }}" @selected(old('id_filial')==$filial->id)>
+                            <option value="{{ $filial->id }}" data-dias="{{ $filial->datas_agenda }}" @selected(old('id_filial')==$filial->id)>
                                 {{ $filial->cidade }} - {{ $filial->endereco }}
                             </option>
                             @endforeach
@@ -81,6 +81,9 @@
                             min="{{ now()->format('Y-m-d\\TH:i') }}" required>
                         <div id="horario_erro" class="invalid-feedback">
                             Escolha um horário entre 08:30 e 18:30.
+                        </div>
+                        <div id="dia_erro" class="invalid-feedback">
+                            A filial escolhida não atende neste dia.
                         </div>
                         @error('data_hora')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -127,6 +130,8 @@
     document.addEventListener('DOMContentLoaded', function() {
         const dataHora = document.getElementById('data_hora');
         const horarioErro = document.getElementById('horario_erro');
+        const diaErro = document.getElementById('dia_erro');
+        const filial = document.getElementById('id_filial');
         const pacientes = [];
         const opcoesPacientes = document.querySelectorAll('#pacientes_lista option');
 
@@ -151,9 +156,56 @@
             return horario >= '08:30' && horario <= '18:30';
         }
 
+        function diaValido() {
+            if (!dataHora.value || !filial.value) {
+                return true;
+            }
+
+            const diasPermitidos = [];
+            const diasFilial = (filial.selectedOptions[0].dataset.dias || '').split(';');
+
+            diasFilial.forEach(function(dia) {
+                if (dia !== '') {
+                    diasPermitidos.push(Number(dia));
+                }
+            });
+            return diasPermitidos.includes(new Date(dataHora.value).getDay());
+        }
+
+        function validarData() {
+            const horarioOk = horarioValido();
+            const diaOk = diaValido();
+
+            if (!horarioOk || !diaOk) {
+                dataHora.classList.add('is-invalid');
+            } else {
+                dataHora.classList.remove('is-invalid');
+            }
+
+            if (!horarioOk) {
+                horarioErro.classList.add('d-block');
+            } else {
+                horarioErro.classList.remove('d-block');
+            }
+
+            if (!diaOk) {
+                diaErro.classList.add('d-block');
+            } else {
+                diaErro.classList.remove('d-block');
+            }
+
+            return horarioOk && diaOk;
+        }
+
         dataHora.addEventListener('change', function() {
-            dataHora.classList.toggle('is-invalid', !horarioValido());
-            horarioErro.classList.toggle('d-block', !horarioValido());
+            validarData();
+        });
+
+        filial.addEventListener('change', function() {
+            if (!diaValido()) {
+                dataHora.value = '';
+            }
+            validarData();
         });
 
         cpfInput.addEventListener('input', function() {
@@ -183,10 +235,8 @@
         });
 
         form.addEventListener('submit', function(event) {
-            if (!horarioValido()) {
+            if (!validarData()) {
                 event.preventDefault();
-                dataHora.classList.add('is-invalid');
-                horarioErro.classList.add('d-block');
                 dataHora.focus();
                 return;
             }

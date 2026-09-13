@@ -52,7 +52,7 @@
                         <label for="id_filial" class="form-label">Filial</label>
                         <select name="id_filial" id="id_filial" class="form-select @error('id_filial') is-invalid @enderror" required>
                             @foreach ($filiais as $filial)
-                            <option value="{{ $filial->id }}" @selected(old('id_filial', $agendamento->id_filial) == $filial->id)>
+                            <option value="{{ $filial->id }}" data-dias="{{ $filial->datas_agenda }}" @selected(old('id_filial', $agendamento->id_filial) == $filial->id)>
                                 {{ $filial->cidade }} - {{ $filial->endereco }}
                             </option>
                             @endforeach
@@ -66,6 +66,7 @@
                             class="form-control @error('data_hora') is-invalid @enderror"
                             value="{{ old('data_hora', $agendamento->data_hora->format('Y-m-d\\TH:i')) }}"
                             min="{{ now()->format('Y-m-d\\TH:i') }}" required>
+                        <div id="dia_erro" class="invalid-feedback">A filial escolhida não atende neste dia.</div>
                         @error('data_hora')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
 
@@ -105,3 +106,53 @@
     </div>
 </div>
 @endsection
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filial = document.getElementById('id_filial');
+        const dataHora = document.getElementById('data_hora');
+        const diaErro = document.getElementById('dia_erro');
+        const form = dataHora.closest('form');
+
+        function diaValido() {
+            if (!dataHora.value || !filial.value) return true;
+            const diasPermitidos = [];
+            const diasFilial = (filial.selectedOptions[0].dataset.dias || '').split(';');
+
+            diasFilial.forEach(function(dia) {
+                if (dia !== '') {
+                    diasPermitidos.push(Number(dia));
+                }
+            });
+
+            return diasPermitidos.includes(new Date(dataHora.value).getDay());
+        }
+
+        function validarData() {
+            const valido = diaValido();
+
+            if (!valido) {
+                dataHora.classList.add('is-invalid');
+                diaErro.classList.add('d-block');
+            } else {
+                dataHora.classList.remove('is-invalid');
+                diaErro.classList.remove('d-block');
+            }
+
+            return valido;
+        }
+
+        dataHora.addEventListener('change', validarData);
+        filial.addEventListener('change', function() {
+            if (!diaValido()) dataHora.value = '';
+            validarData();
+        });
+        form.addEventListener('submit', function(event) {
+            if (!validarData()) {
+                event.preventDefault();
+                dataHora.focus();
+            }
+        });
+        validarData();
+    });
+</script>
