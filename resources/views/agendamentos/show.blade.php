@@ -74,7 +74,7 @@
 
             @if ($statusAgendamento != 'cancelado')
             <div class="d-flex gap-2 mt-4 pt-4" style="border-top: 1px solid #EEF1F6;">
-                @if ($statusAgendamento != 'concluido')
+                @if ($statusAgendamento != 'concluido' && auth()->user()->tipo == 1)
                 <a href="{{ route('dentista.servicos-tratamento.create') }}?id_agendamento={{ $agendamento->id }}" class="btn btn-success">
                     <i class="bi bi-check-lg me-1"></i> Confirmar agendamento
                 </a>

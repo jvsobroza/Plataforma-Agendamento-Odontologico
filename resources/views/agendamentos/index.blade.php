@@ -64,9 +64,11 @@
                 <a href="#" id="modalVerLink" class="btn btn-outline-primary btn-sm">
                     <i class="bi bi-eye me-1"></i> Visualizar agendamento
                 </a>
-                <a href="#" id="modalConfirmarLink" class="btn btn-success btn-sm">
-                    <i class="bi bi-check-lg me-1"></i> Confirmar agendamento
-                </a>
+                @if (auth()->user()->tipo == 1)
+                    <a href="#" id="modalConfirmarLink" class="btn btn-success btn-sm">
+                        <i class="bi bi-check-lg me-1"></i> Confirmar agendamento
+                    </a>
+                @endif
                 <a href="#" id="modalEditarLink" class="btn btn-outline-primary btn-sm">
                     <i class="bi bi-pencil-square me-1"></i> Editar
                 </a>
@@ -190,14 +192,18 @@
                 verLink.href = `/agendamentos/${props.id}`;
 
                 if (agendamentoCancelado) {
-                    confirmarLink.style.setProperty('display', 'none', 'important');
+                    if (confirmarLink) {
+                        confirmarLink.style.setProperty('display', 'none', 'important');
+                    }
                     editarLink.style.setProperty('display', 'none', 'important');
                     excluirForm.style.setProperty('display', 'none', 'important');
                 } else {
-                    confirmarLink.style.removeProperty('display');
+                    if (confirmarLink) {
+                        confirmarLink.style.removeProperty('display');
+                        confirmarLink.href = `{{ route('dentista.servicos-tratamento.create') }}?id_agendamento=${props.id}`;
+                    }
                     editarLink.style.removeProperty('display');
                     excluirForm.style.removeProperty('display');
-                    confirmarLink.href = `{{ route('dentista.servicos-tratamento.create') }}?id_agendamento=${props.id}`;
                     editarLink.href = `/agendamentos/${props.id}/edit`;
                     excluirForm.action = `/agendamentos/${props.id}`;
                 }

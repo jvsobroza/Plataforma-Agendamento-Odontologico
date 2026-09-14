@@ -186,7 +186,7 @@
 </dialog>
 @endsection
 <script>
-  let idAgendamento = null;
+  let agendamentoIdAtual = null;
 
   function abrirModalAgendamento(item) {
     const modal = document.getElementById('modalAgendamento');
@@ -216,9 +216,17 @@
     document.getElementById('modalAgendamento').close();
   }
 
-  function confirmarAgendamento() {} //falta
+  function confirmarAgendamento() {
+    if (!agendamentoIdAtual) return;
+    const baseUrl = "{{ route('dentista.servicos-tratamento.create') }}";
+    window.location.href = `${baseUrl}?id_agendamento=${agendamentoIdAtual}`;
+  }
 
-  function reagendarAgendamento() {} //falta
+  function reagendarAgendamento() {
+    if (!agendamentoIdAtual) return;
+    const baseUrl = "{{ route('agendamentos.edit', ':id') }}";
+    window.location.href = baseUrl.replace(':id', agendamentoIdAtual);
+  }
 
   function cancelarAgendamento() {
     if (!agendamentoIdAtual) return;

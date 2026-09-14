@@ -213,7 +213,11 @@
         document.getElementById('modalAgendamento').close();
     }
 
-    function reagendarAgendamento() {} //falta
+    function reagendarAgendamento() {
+        if (!agendamentoIdAtual) return;
+        const baseUrl = "{{ route('agendamentos.edit', ':id') }}";
+        window.location.href = baseUrl.replace(':id', agendamentoIdAtual);
+    }
 
     function cancelarAgendamento() {
         if (!agendamentoIdAtual) return;

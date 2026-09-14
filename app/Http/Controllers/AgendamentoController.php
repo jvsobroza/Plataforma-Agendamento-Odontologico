@@ -43,7 +43,7 @@ class AgendamentoController extends Controller
         } else {
             Agendamento::create($agendamento);
         }
-        return redirect()->route('agendamentos.index')->with('success', 'Agendamento cadastrado com sucesso.');
+        return redirect()->back()->with('success', 'Agendamento cadastrado com sucesso.');
     }
 
     /**
@@ -83,7 +83,7 @@ class AgendamentoController extends Controller
     public function update(UpdateAgendamentoRequest $request, Agendamento $agendamento)
     {
         $agendamento->update($request->validated());
-        return redirect()->route('agendamentos.index')->with('success', 'Agendamento atualizado com sucesso.');
+        return redirect()->back()->with('success', 'Agendamento atualizado com sucesso.');
     }
 
     /**
