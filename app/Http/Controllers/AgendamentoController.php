@@ -16,7 +16,12 @@ class AgendamentoController extends Controller
      */
     public function index()
     {
-        $agendamentos = Agendamento::with(['paciente', 'filial', 'servicoTratamentos.servico'])->get();
+        $usuario = auth()->user();
+        $consulta = Agendamento::with(['paciente', 'filial', 'servicoTratamentos.servico']);
+        if ($usuario->tipo == 2) {
+            $consulta->where('id_filial', $usuario->id_filial);
+        }
+        $agendamentos = $consulta->get();
         return view("agendamentos.index", compact("agendamentos"));
     }
 

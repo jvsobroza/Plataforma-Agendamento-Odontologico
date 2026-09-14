@@ -64,7 +64,16 @@ class PacienteController extends Controller
      */
     public function show(Paciente $paciente)
     {
-        $paciente = Paciente::with(['planos', 'agendamentos'])->findOrFail($paciente->id);
+        $usuario = auth()->user();
+        $paciente = Paciente::with('planos')->findOrFail($paciente->id);
+
+        if ($usuario->tipo == 1) {
+            $agendamentos = $paciente->agendamentos()->get();
+        } else {
+            $agendamentos = $paciente->agendamentos()
+                ->where('id_filial', $usuario->id_filial)
+                ->get();
+        }
         $servicos = Servico::all();
         foreach ($paciente->planos as $plano) {
             $idPlanejados = array_filter(explode(',', $plano->servicos_planejados ?? ''));
@@ -83,7 +92,7 @@ class PacienteController extends Controller
             $plano->servicos_concluidos = implode(', ', $servicosConcluidos);
         }
 
-        return view('pacientes.show', compact('paciente'));
+        return view('pacientes.show', compact('paciente', 'agendamentos'));
     }
 
     /**

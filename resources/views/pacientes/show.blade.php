@@ -174,12 +174,12 @@
                     </div>
 
                     <span class="badge-count">
-                        {{ $paciente->agendamentos->count() }}
-                        {{ $paciente->agendamentos->count() == 1 ? 'registro' : 'registros' }}
+                        {{ $agendamentos->count() }}
+                        {{ $agendamentos->count() == 1 ? 'registro' : 'registros' }}
                     </span>
                 </div>
 
-                @if($paciente->agendamentos->isEmpty())
+                @if($agendamentos->isEmpty())
                 <div class="empty-state">
                     <i class="bi bi-calendar-x"></i>
                     <p class="mb-1 fw-semibold">Nenhum agendamento registrado</p>
@@ -200,7 +200,7 @@
                         </thead>
 
                         <tbody>
-                            @foreach($paciente->agendamentos->sortByDesc('data_hora') as $agendamento)
+                            @foreach($agendamentos->sortByDesc('data_hora') as $agendamento)
                             @php
                             $status = strtolower($agendamento->status_agendamento ?? '');
 
