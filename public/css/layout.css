@@ -214,6 +214,28 @@ body {
 .status-dot.agendado {
     background-color: #b0b0b0;
 }
+.status-dot.pendente {
+    background-color: var(--azul-principal);
+}
+.status-dot.cancelado {
+    background-color: var(--vermelho-apoio);
+}
+
+.calendar-legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+    padding: 14px 4px 18px;
+    font-size: 0.86rem;
+    color: #6b7280;
+    font-weight: 600;
+}
+.calendar-legend .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 
 .agenda-info {
     flex: 1;
@@ -245,13 +267,15 @@ body {
 .badge-status.proximo {
     background-color: #f5a623;
 }
-.badge-status.pendente {
+.badge-status.agendado {
     background-color: #b0b0b0;
     color: #fff;
 }
+.badge-status.pendente {
+    background-color: var(--azul-principal);
+}
 .badge-status.cancelado {
-    background-color: #ff0000;
-    color: #fcfcfc;
+    background-color: var(--vermelho-apoio);
 }
 
 .agenda-chevron {
@@ -843,241 +867,67 @@ body {
         padding-right: 14px;
     }
 }
-.sidebar-link {
-    display: flex;
-    align-items: center;
-    padding: 10px 15px;
-    text-decoration: none;
-    color: #333;
-    border-left: 4px solid transparent;
-    transition: all 0.2s ease-in-out;
-}
 
-.sidebar-link.active {
-    border-left-color: #0d6efd;
-    background-color: rgba(13, 110, 253, 0.08);
-    color: #0d6efd;
-    font-weight: 600;
-}
-dialog.modal-sante::backdrop {
-    background-color: rgba(15, 23, 42, 0.45);
-    backdrop-filter: blur(2px);
-}
+/* ===================================================
+   Serviços e tratamentos — tela de detalhe do agendamento
+=================================================== */
 
-dialog.modal-sante {
-    border: none;
-    border-radius: 20px;
+.service-list {
+    list-style: none;
+    margin: 0;
     padding: 0;
-    width: 90%;
-    max-width: 520px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-    background: #ffffff;
-    font-family:
-        system-ui,
-        -apple-system,
-        sans-serif;
-    overflow: hidden;
 }
 
-.modal-content {
-    position: relative;
-    padding: 28px;
-}
-
-.btn-fechar {
-    position: absolute;
-    top: 18px;
-    right: 20px;
-    background: none;
-    border: none;
-    font-size: 26px;
-    color: #94a3b8;
-    cursor: pointer;
-}
-
-.modal-header {
+.service-list-item {
     display: flex;
     align-items: center;
     gap: 14px;
-    margin-bottom: 24px;
+    padding: 14px 0;
+    border-bottom: 1px solid #EEF1F6;
 }
 
-.avatar-iniciais {
-    width: 56px;
-    height: 56px;
-    background-color: #003380;
-    color: #ffffff;
-    font-weight: 700;
-    font-size: 20px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.service-list-item:last-child {
+    border-bottom: none;
 }
 
-.header-info {
+.service-list-item .service-info {
     flex: 1;
+    min-width: 0;
 }
 
-.paciente-nome {
-    margin: 0;
-    font-size: 22px;
+.service-list-item .service-name {
     font-weight: 700;
-    color: #003380;
+    font-size: 0.95rem;
+    color: var(--preto-tipo);
 }
 
-.paciente-servico {
-    font-size: 14px;
-    color: #64748b;
+.service-list-item .service-time {
+    color: #8a93a6;
+    font-size: 0.82rem;
 }
 
-.filial-tag {
-    background-color: #e2e8f0;
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #475569;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.modal-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 20px;
-}
-
-.info-card {
-    background-color: #f1f5f9;
-    padding: 14px 16px;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.card-label {
-    font-size: 15px;
+.service-list-item .service-price {
     font-weight: 700;
-    color: #003380;
-}
-
-.card-value {
-    font-size: 15px;
-    color: #0f172a;
-}
-
-.status-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.status-dot-md {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background-color: #00bfff;
-}
-
-.badge-status-pill {
-    background-color: #00bfff;
-    color: #ffffff;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 20px;
-}
-
-.modal-section {
-    margin-bottom: 16px;
-}
-
-.section-title {
-    display: block;
-    font-size: 16px;
-    font-weight: 700;
-    color: #334155;
-    margin-bottom: 8px;
-}
-
-.observation-box {
-    background-color: #f1f5f9;
-    padding: 14px 16px;
-    border-radius: 12px;
-    font-size: 14px;
-    color: #334155;
-    min-height: 50px;
-}
-
-.section-text {
-    margin: 0;
-    font-size: 14px;
-    color: #475569;
-}
-
-.modal-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 24px;
-}
-
-.modal-actions button {
-    flex: 1;
-    border: none;
-    padding: 12px 8px;
-    border-radius: 20px;
-    font-weight: 700;
-    font-size: 14px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-}
-
-.btn-confirmar {
-    background-color: #00c853;
-    color: #ffffff;
-}
-
-.btn-reagendar {
-    background-color: #ffe0b2;
-    color: #f57c00;
-}
-
-.btn-cancelar {
-    background-color: #ffcdd2;
-    color: #e53935;
-}
-#calendar {
-    max-width: 100%;
-}
-.fc .fc-toolbar-title {
     color: var(--azul-principal);
+    white-space: nowrap;
+}
+
+.service-total-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 16px;
+    margin-top: 6px;
+    border-top: 2px solid #EEF1F6;
+}
+
+.service-total-label {
     font-weight: 700;
-    font-size: 1.3rem;
+    color: var(--preto-tipo);
 }
-.fc .fc-button-primary {
-    background-color: var(--azul-principal);
-    border-color: var(--azul-principal);
-}
-.fc .fc-button-primary:hover {
-    background-color: var(--azul-hover);
-    border-color: var(--azul-hover);
-}
-.fc .fc-button-primary:disabled {
-    background-color: #b9c2d6;
-    border-color: #b9c2d6;
-}
-.fc-event {
-    cursor: pointer;
-    border: none;
-    padding: 2px 4px;
-}
-.fc-daygrid-day.fc-day-today {
-    background-color: #eef3fc;
+
+.service-total-value {
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: var(--azul-principal);
 }

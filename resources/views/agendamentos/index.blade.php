@@ -19,16 +19,33 @@
 @section('content')
 
 <div class="card">
+    <div class="card-header section-card-header">
+        <div>
+            <span class="section-overline">Visão geral</span>
+            <h5 class="mb-0">Calendário de agendamentos</h5>
+        </div>
+        <span class="section-icon">
+            <i class="bi bi-calendar3"></i>
+        </span>
+    </div>
+
     <div class="card-body p-3">
+        <div class="calendar-legend">
+            <span class="legend-item"><span class="status-dot pendente"></span> Pendente</span>
+            <span class="legend-item"><span class="status-dot concluido"></span> Concluído</span>
+            <span class="legend-item"><span class="status-dot cancelado"></span> Cancelado</span>
+        </div>
         <div id="calendar"></div>
     </div>
 </div>
+
+{{-- Modal de detalhes do agendamento --}}
 <div class="modal fade" id="agendamentoModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="border-radius: 16px; border: none;">
             <div class="modal-header" style="border-bottom: 1px solid #EEF1F6;">
                 <div class="d-flex align-items-center gap-3">
-                    <div id="modalAvatar" class="service-avatar" style="width:48px; height:48px; font-weight:700; font-size:1rem;"></div>
+                    <div id="modalAvatar" class="patient-avatar" style="width:56px; height:56px; font-size:1.4rem;"></div>
                     <div>
                         <h5 class="mb-0" id="modalPaciente"></h5>
                         <span class="text-muted" id="modalServico" style="font-size: .88rem;"></span>
@@ -38,25 +55,48 @@
             </div>
 
             <div class="modal-body">
-                <div class="row g-3 mb-3">
-                    <div class="col-6">
-                        <div class="detail-label">Horário</div>
-                        <div class="detail-value mb-0" id="modalHorario"></div>
+                <div class="patient-detail-grid">
+                    <div class="patient-detail-item">
+                        <div class="patient-detail-icon">
+                            <i class="bi bi-clock"></i>
+                        </div>
+                        <div>
+                            <span class="detail-label">Horário</span>
+                            <p class="detail-value mb-0" id="modalHorario"></p>
+                        </div>
                     </div>
-                    <div class="col-6">
-                        <div class="detail-label">Status</div>
-                        <span class="badge-status" id="modalStatus"></span>
+
+                    <div class="patient-detail-item">
+                        <div class="patient-detail-icon">
+                            <i class="bi bi-flag"></i>
+                        </div>
+                        <div>
+                            <span class="detail-label">Status</span>
+                            <p class="detail-value mb-0">
+                                <span class="badge-status" id="modalStatus"></span>
+                            </p>
+                        </div>
                     </div>
-                </div>
 
-                <div class="mb-3">
-                    <div class="detail-label">Filial</div>
-                    <div class="detail-value mb-0" id="modalFilial"></div>
-                </div>
+                    <div class="patient-detail-item">
+                        <div class="patient-detail-icon">
+                            <i class="bi bi-geo-alt"></i>
+                        </div>
+                        <div>
+                            <span class="detail-label">Filial</span>
+                            <p class="detail-value mb-0" id="modalFilial"></p>
+                        </div>
+                    </div>
 
-                <div class="mb-1">
-                    <div class="detail-label">Observações</div>
-                    <div class="detail-value mb-0" id="modalObservacoes"></div>
+                    <div class="patient-detail-item patient-observations">
+                        <div class="patient-detail-icon">
+                            <i class="bi bi-chat-left-text"></i>
+                        </div>
+                        <div>
+                            <span class="detail-label">Observações</span>
+                            <p class="detail-value mb-0" id="modalObservacoes"></p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -91,6 +131,7 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.11/index.global.min.css" rel="stylesheet">
 @endpush
 
+@push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.11/index.global.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -215,3 +256,4 @@
         calendar.render();
     });
 </script>
+@endpush
