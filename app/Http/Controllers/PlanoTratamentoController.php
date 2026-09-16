@@ -76,7 +76,7 @@ class PlanoTratamentoController extends Controller
         $servicosConcluidos = [];
         foreach (array_filter(explode(',', $planoTratamento->servicos_concluidos ?? '')) as $item) {
             $item = trim($item);
-            if ($item !== '') {
+            if ($item != '') {
                 $nomeServico = $item;
                 if (str_contains($item, ';')) {
                     $partes = explode(';', $item, 2);
@@ -106,7 +106,32 @@ class PlanoTratamentoController extends Controller
     public function edit($id)
     {
         $planoTratamento = PlanoTratamento::with(['paciente'])->findOrFail($id);
-        return view('planos-tratamento.edit', compact('planoTratamento'));
+        $servicos = Servico::where('ativo', true)->get();
+
+        $servicosPlanejadosSelecionados = [];
+        foreach (array_filter(explode(',', $planoTratamento->servicos_planejados ?? '')) as $item) {
+            $item = trim($item);
+            if ($item !== '') {
+                $idServico = str_contains($item, ';') ? trim(explode(';', $item, 2)[0] ?? 0) : $item;
+                $servicosPlanejadosSelecionados[] = (int) $idServico;
+            }
+        }
+
+        $servicosConcluidosSelecionados = [];
+        foreach (array_filter(explode(',', $planoTratamento->servicos_concluidos ?? '')) as $item) {
+            $item = trim($item);
+            if ($item !== '') {
+                $idServico = str_contains($item, ';') ? trim(explode(';', $item, 2)[0] ?? 0) : $item;
+                $servicosConcluidosSelecionados[] = (int) $idServico;
+            }
+        }
+
+        return view('planos-tratamento.edit', compact(
+            'planoTratamento',
+            'servicos',
+            'servicosPlanejadosSelecionados',
+            'servicosConcluidosSelecionados'
+        ));
     }
 
     /**
@@ -115,8 +140,17 @@ class PlanoTratamentoController extends Controller
     public function update(UpdatePlanoTratamentoRequest $request, $id)
     {
         $planoTratamento = PlanoTratamento::findOrFail($id);
-        $planoTratamento->update($request->validated());
-        return redirect()->route('pacientes.show', ['paciente' => $planoTratamento->id_paciente])->with('success', 'Plano de Tratamento atualizado com sucesso.');
+        $dados = $request->validated();
+        if (($dados['status'] ?? null) == 'Cancelado') {
+            return $this->destroy($id);
+        }
+        $dados['servicos_planejados'] = implode(',', $dados['servicos_planejados'] ?? []);
+        $dados['servicos_concluidos'] = isset($dados['servicos_concluidos'])
+            ? implode(',', $dados['servicos_concluidos'])
+            : null;
+        $planoTratamento->update($dados);
+        return redirect()->route('pacientes.show', ['paciente' => $planoTratamento->id_paciente])
+            ->with('success', 'Plano de Tratamento atualizado com sucesso.');
     }
 
     /**
