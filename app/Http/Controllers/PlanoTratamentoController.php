@@ -52,34 +52,82 @@ class PlanoTratamentoController extends Controller
     public function show($id)
     {
         $planoTratamento = PlanoTratamento::with(['paciente'])->findOrFail($id);
+        $servicos = Servico::where('ativo', true)->get();
+        $servicosPlanejados = [];
+        foreach (array_filter(explode(',', $planoTratamento->servicos_planejados ?? '')) as $item) {
+            $item = trim($item);
+            if ($item != '') {
+                $nomeServico = $item;
+                if (str_contains($item, ';')) {
+                    $partes = explode(';', $item, 2);
+                    $nomeServico = trim($partes[1] ?? $partes[0] ?? 'Serviço não informado');
+                } else {
+                    $idServico = (int) $item;
+                    foreach ($servicos as $servico) {
+                        if ($servico->id == $idServico) {
+                            $nomeServico = $servico->nome;
+                            break;
+                        }
+                    }
+                }
+                $servicosPlanejados[] = $nomeServico;
+            }
+        }
+        $servicosConcluidos = [];
+        foreach (array_filter(explode(',', $planoTratamento->servicos_concluidos ?? '')) as $item) {
+            $item = trim($item);
+            if ($item !== '') {
+                $nomeServico = $item;
+                if (str_contains($item, ';')) {
+                    $partes = explode(';', $item, 2);
+                    $nomeServico = trim($partes[1] ?? $partes[0] ?? 'Serviço não informado');
+                } else {
+                    $idServico = (int) $item;
+                    foreach ($servicos as $servico) {
+                        if ($servico->id == $idServico) {
+                            $nomeServico = $servico->nome;
+                            break;
+                        }
+                    }
+                }
+                $servicosConcluidos[] = $nomeServico;
+            }
+        }
+
+        $planoTratamento->servicos_planejados_formatados = $servicosPlanejados;
+        $planoTratamento->servicos_concluidos_formatados = $servicosConcluidos;
+
         return view('planos-tratamento.show', compact('planoTratamento'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(PlanoTratamento $planoTratamento)
+    public function edit($id)
     {
-        $planoTratamento = PlanoTratamento::with(['paciente'])->findOrFail($planoTratamento->id);
-        return view('plano-tratamento.edit', compact('planoTratamento'));
+        $planoTratamento = PlanoTratamento::with(['paciente'])->findOrFail($id);
+        return view('planos-tratamento.edit', compact('planoTratamento'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePlanoTratamentoRequest $request, PlanoTratamento $planoTratamento)
+    public function update(UpdatePlanoTratamentoRequest $request, $id)
     {
+        $planoTratamento = PlanoTratamento::findOrFail($id);
         $planoTratamento->update($request->validated());
-        return redirect()->route('plano-tratamento.index')->with('success', 'Plano de Tratamento atualizado com sucesso.');
+        return redirect()->route('pacientes.show', ['paciente' => $planoTratamento->id_paciente])->with('success', 'Plano de Tratamento atualizado com sucesso.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(PlanoTratamento $planoTratamento)
+    public function destroy($id)
     {
-        $planoTratamento = PlanoTratamento::findOrFail($planoTratamento->id);
+        $planoTratamento = PlanoTratamento::findOrFail($id);
         $planoTratamento->update(['ativo' => false]);
-        return redirect()->route('plano-tratamento.index')->with('success', 'Plano de Tratamento desativado com sucesso.');
+        $planoTratamento->update(['status' => 'Cancelado']);
+        return redirect()->route('pacientes.show', ['paciente' => $planoTratamento->id_paciente])
+            ->with('success', 'Plano de Tratamento desativado com sucesso.');
     }
 }
