@@ -184,6 +184,9 @@ body {
     border-bottom: 1px solid #eef1f6;
     text-decoration: none;
     color: inherit;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.15s ease;
 }
 .agenda-item:last-child {
     border-bottom: none;
@@ -883,7 +886,7 @@ body {
     align-items: center;
     gap: 14px;
     padding: 14px 0;
-    border-bottom: 1px solid #EEF1F6;
+    border-bottom: 1px solid #eef1f6;
 }
 
 .service-list-item:last-child {
@@ -918,7 +921,7 @@ body {
     justify-content: space-between;
     padding-top: 16px;
     margin-top: 6px;
-    border-top: 2px solid #EEF1F6;
+    border-top: 2px solid #eef1f6;
 }
 
 .service-total-label {
@@ -930,4 +933,224 @@ body {
     font-weight: 800;
     font-size: 1.2rem;
     color: var(--azul-principal);
+}
+dialog.modal-sante::backdrop {
+    background-color: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(2px);
+}
+
+dialog.modal-sante {
+    border: none;
+    border-radius: 20px;
+    padding: 0;
+    width: 90%;
+    max-width: 520px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    background: #ffffff;
+    font-family: "Open Sans", sans-serif;
+    overflow: hidden;
+}
+
+.modal-sante .modal-content {
+    position: relative;
+    padding: 28px;
+}
+
+.modal-sante .btn-fechar {
+    position: absolute;
+    top: 18px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 26px;
+    line-height: 1;
+    color: #94a3b8;
+    cursor: pointer;
+}
+
+.modal-sante .modal-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding: 0;
+    border: none;
+}
+
+.modal-sante .avatar-iniciais {
+    width: 56px;
+    height: 56px;
+    background-color: var(--azul-principal);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 20px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.modal-sante .header-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.modal-sante .paciente-nome {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--azul-principal);
+}
+
+.modal-sante .paciente-servico {
+    font-size: 14px;
+    color: #64748b;
+}
+
+.modal-sante .filial-tag {
+    background-color: #e7ecf7;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--azul-principal);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.modal-sante .modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.modal-sante .info-card {
+    background-color: #f1f5f9;
+    padding: 14px 16px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.modal-sante .card-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--azul-principal);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.modal-sante .card-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.modal-sante .status-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.modal-sante .status-dot-md {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--azul-principal);
+    flex-shrink: 0;
+}
+
+.modal-sante .badge-status-pill {
+    background-color: var(--azul-principal);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.modal-sante .modal-section {
+    margin-bottom: 16px;
+}
+
+.modal-sante .section-title {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--azul-principal);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 8px;
+}
+
+.modal-sante .observation-box {
+    background-color: #f1f5f9;
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    color: #334155;
+    min-height: 50px;
+}
+
+.modal-sante .section-text {
+    margin: 0;
+    font-size: 14px;
+    color: #475569;
+}
+
+.modal-sante .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.modal-sante .modal-actions button {
+    flex: 1;
+    border: none;
+    padding: 12px 8px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: filter 0.15s ease;
+}
+
+.modal-sante .modal-actions button:hover {
+    filter: brightness(0.93);
+}
+
+.modal-sante .btn-confirmar {
+    background-color: var(--verde-apoio);
+    color: #ffffff;
+}
+
+.modal-sante .btn-reagendar {
+    background-color: #ffe9c7;
+    color: #9a5b00;
+}
+
+.modal-sante .btn-cancelar {
+    background-color: #fbd8d2;
+    color: var(--vermelho-apoio);
+}
+.fc-event {
+    cursor: pointer;
+    border: none;
+    padding: 2px 4px;
+    transition:
+        filter 0.15s ease,
+        transform 0.1s ease;
+}
+.fc-event:hover {
+    filter: brightness(0.9);
+    transform: translateY(-1px);
 }
