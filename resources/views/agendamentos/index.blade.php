@@ -105,9 +105,9 @@
                     <i class="bi bi-eye me-1"></i> Visualizar agendamento
                 </a>
                 @if (auth()->user()->tipo == 1)
-                    <a href="#" id="modalConfirmarLink" class="btn btn-success btn-sm">
-                        <i class="bi bi-check-lg me-1"></i> Confirmar agendamento
-                    </a>
+                <a href="#" id="modalConfirmarLink" class="btn btn-success btn-sm">
+                    <i class="bi bi-check-lg me-1"></i> Confirmar agendamento
+                </a>
                 @endif
                 <a href="#" id="modalEditarLink" class="btn btn-outline-primary btn-sm">
                     <i class="bi bi-pencil-square me-1"></i> Editar
