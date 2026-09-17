@@ -1109,7 +1109,8 @@ dialog.modal-sante {
     margin-top: 24px;
 }
 
-.modal-sante .modal-actions button {
+.modal-sante .modal-actions button,
+.modal-sante .modal-actions a {
     flex: 1;
     border: none;
     padding: 12px 8px;
@@ -1122,9 +1123,11 @@ dialog.modal-sante {
     justify-content: center;
     gap: 6px;
     transition: filter 0.15s ease;
+    text-decoration: none;
 }
 
-.modal-sante .modal-actions button:hover {
+.modal-sante .modal-actions button:hover,
+.modal-sante .modal-actions a:hover {
     filter: brightness(0.93);
 }
 
@@ -1136,6 +1139,11 @@ dialog.modal-sante {
 .modal-sante .btn-reagendar {
     background-color: #ffe9c7;
     color: #9a5b00;
+}
+
+.modal-sante .btn-visualizar {
+    background-color: #dbeafe;
+    color: #1d4ed8;
 }
 
 .modal-sante .btn-cancelar {
