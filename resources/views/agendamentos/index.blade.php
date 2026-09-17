@@ -229,24 +229,32 @@
                 const editarLink = document.getElementById('modalEditarLink');
                 const excluirForm = document.getElementById('modalExcluirForm');
                 const agendamentoCancelado = status.includes('cancelado') || statusLabel.includes('cancelado');
+                const agendamentoConfirmado = status.includes('concluido') ||
+                    status.includes('confirmado') ||
+                    statusLabel.includes('concluido') ||
+                    statusLabel.includes('confirmado');
 
                 verLink.href = `/agendamentos/${props.id}`;
+                editarLink.href = `/agendamentos/${props.id}/edit`;
+                excluirForm.action = `/agendamentos/${props.id}`;
 
-                if (agendamentoCancelado) {
+                if (agendamentoCancelado || agendamentoConfirmado) {
                     if (confirmarLink) {
                         confirmarLink.style.setProperty('display', 'none', 'important');
                     }
-                    editarLink.style.setProperty('display', 'none', 'important');
-                    excluirForm.style.setProperty('display', 'none', 'important');
                 } else {
                     if (confirmarLink) {
                         confirmarLink.style.removeProperty('display');
                         confirmarLink.href = `{{ route('dentista.servicos-tratamento.create') }}?id_agendamento=${props.id}`;
                     }
+                }
+
+                if (agendamentoCancelado) {
+                    editarLink.style.setProperty('display', 'none', 'important');
+                    excluirForm.style.setProperty('display', 'none', 'important');
+                } else {
                     editarLink.style.removeProperty('display');
                     excluirForm.style.removeProperty('display');
-                    editarLink.href = `/agendamentos/${props.id}/edit`;
-                    excluirForm.action = `/agendamentos/${props.id}`;
                 }
 
                 new bootstrap.Modal(document.getElementById('agendamentoModal')).show();

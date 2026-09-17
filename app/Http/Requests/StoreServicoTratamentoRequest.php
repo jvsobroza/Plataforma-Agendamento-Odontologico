@@ -23,11 +23,11 @@ class StoreServicoTratamentoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "id_planos"=> "required|integer|exists:plano_tratamentos,id",
-            "id_servico"=> "required|integer|exists:servicos,id",
-            "id_agendamento"=> "required|integer|exists:agendamentos,id",
-            "tempo"=> "required|integer",
-            "preco" => "required|numeric",
+            "id_planos" => "required|integer|exists:plano_tratamentos,id",
+            "id_servico" => "required|integer|exists:servicos,id",
+            "id_agendamento" => "required|integer|exists:agendamentos,id",
+            "tempo" => "required|integer|min:1",
+            "preco" => "required|numeric|min:0",
         ];
     }
 }

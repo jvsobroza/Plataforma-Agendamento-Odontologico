@@ -65,7 +65,7 @@
                         <input type="datetime-local" name="data_hora" id="data_hora"
                             class="form-control @error('data_hora') is-invalid @enderror"
                             value="{{ old('data_hora', $agendamento->data_hora->format('Y-m-d\\TH:i')) }}"
-                            min="{{ now()->format('Y-m-d\\TH:i') }}" required>
+                            @if ($agendamento->data_hora->isFuture()) min="{{ now()->format('Y-m-d\\TH:i') }}" @endif required>
                         <div id="dia_erro" class="invalid-feedback">A filial escolhida não atende neste dia.</div>
                         @error('data_hora')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>

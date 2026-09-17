@@ -168,6 +168,9 @@
         </div>
 
         <div class="modal-actions">
+            <a id="btnVisualizarAgendamento" class="btn-visualizar" href="#" style="display: none;">
+                <i class="bi bi-eye"></i> Visualizar
+            </a>
             <button type="button" class="btn-reagendar" onclick="reagendarAgendamento()">
                 <i class="bi bi-arrow-repeat"></i> Reagendar
             </button>
@@ -187,7 +190,10 @@
 
     function abrirModalAgendamento(item) {
         const modal = document.getElementById('modalAgendamento');
-        agendamentoIdAtual = item.id;
+        idAgendamento = item.id;
+        const btnVisualizar = document.getElementById('btnVisualizarAgendamento');
+        const btnReagendar = modal.querySelector('.btn-reagendar');
+        const btnCancelar = modal.querySelector('.btn-cancelar');
         const filial = document.getElementById('filialCidade');
         const inicial = item.paciente ? item.paciente.trim().charAt(0).toUpperCase() : '';
         const statusTexto = {
@@ -206,6 +212,14 @@
         document.getElementById('modalObservacao').innerText = item.observacao || 'Sem observações.';
         document.getElementById('modalUltimaConsulta').innerText = item.ultima_consulta || 'Paciente novo - sem histórico';
 
+        const statusAtual = String(item.status || '').trim().toLowerCase();
+        const concluido = statusAtual === 'concluido' || statusAtual === 'confirmado';
+        btnVisualizar.href = "{{ route('agendamentos.show', ':id') }}".replace(':id', item.id);
+
+        btnVisualizar.style.display = concluido ? 'inline-flex' : 'none';
+        btnReagendar.style.display = concluido ? 'none' : 'inline-flex';
+        btnCancelar.style.display = concluido ? 'none' : 'inline-flex';
+
         modal.showModal();
     }
 
@@ -214,17 +228,17 @@
     }
 
     function reagendarAgendamento() {
-        if (!agendamentoIdAtual) return;
+        if (!idAgendamento) return;
         const baseUrl = "{{ route('agendamentos.edit', ':id') }}";
-        window.location.href = baseUrl.replace(':id', agendamentoIdAtual);
+        window.location.href = baseUrl.replace(':id', idAgendamento);
     }
 
     function cancelarAgendamento() {
-        if (!agendamentoIdAtual) return;
+        if (!idAgendamento) return;
         if (confirm('Tem certeza que deseja cancelar este agendamento?')) {
             const form = document.getElementById('formDeletarAgendamento');
             const baseUrl = "{{ route('agendamentos.destroy', ':id') }}";
-            form.action = baseUrl.replace(':id', agendamentoIdAtual);
+            form.action = baseUrl.replace(':id', idAgendamento);
             form.submit();
         }
     }

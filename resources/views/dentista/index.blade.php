@@ -168,6 +168,9 @@
     </div>
 
     <div class="modal-actions">
+      <a id="btnVisualizarAgendamento" class="btn-visualizar" href="#" style="display: none;">
+        <i class="bi bi-eye"></i> Visualizar
+      </a>
       <button type="button" class="btn-confirmar" onclick="confirmarAgendamento()">
         <i class="bi bi-check-lg"></i> Confirmar
       </button>
@@ -191,6 +194,10 @@
   function abrirModalAgendamento(item) {
     const modal = document.getElementById('modalAgendamento');
     agendamentoIdAtual = item.id;
+    const btnVisualizar = document.getElementById('btnVisualizarAgendamento');
+    const btnConfirmar = modal.querySelector('.btn-confirmar');
+    const btnReagendar = modal.querySelector('.btn-reagendar');
+    const btnCancelar = modal.querySelector('.btn-cancelar');
     const filial = document.getElementById('filialCidade');
     const inicial = item.paciente ? item.paciente.trim().charAt(0).toUpperCase() : '';
     const statusTexto = {
@@ -203,11 +210,20 @@
     document.getElementById('modalServicoHeader').innerText = item.servico;
     document.getElementById('modalFilial').innerText = filial.value || 'Não especificada';
     document.getElementById('modalHora').innerText = item.hora || '--:--';
-    document.getElementById('modalTempo').innerText = '45 min'; //FAZER TEMPO
+    document.getElementById('modalTempo').innerText = '30 min';
     document.getElementById('modalServicoCard').innerText = item.servico || '';
     document.getElementById('modalStatus').innerText = statusTexto[item.status] || item.status;
     document.getElementById('modalObservacao').innerText = item.observacao || 'Sem observações.';
     document.getElementById('modalUltimaConsulta').innerText = item.ultima_consulta || 'Paciente novo - sem histórico';
+
+    const statusAtual = String(item.status || '').trim().toLowerCase();
+    const concluido = statusAtual === 'concluido' || statusAtual === 'confirmado';
+    btnVisualizar.href = "{{ route('agendamentos.show', ':id') }}".replace(':id', item.id);
+
+    btnVisualizar.style.display = concluido ? 'inline-flex' : 'none';
+    btnConfirmar.style.display = concluido ? 'none' : 'inline-flex';
+    btnReagendar.style.display = concluido ? 'none' : 'inline-flex';
+    btnCancelar.style.display = concluido ? 'none' : 'inline-flex';
 
     modal.showModal();
   }

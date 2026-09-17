@@ -115,7 +115,7 @@
                 </div>
 
                 <div class="d-flex gap-2 mt-4">
-                    <a href="{{ url()->previous() }}" class="btn btn-outline-secondary flex-fill">Cancelar</a>
+                    <a href="{{ route('agendamentos.index') }}" class="btn btn-outline-secondary flex-fill">Cancelar</a>
                     <button type="submit" class="btn btn-primary flex-fill">
                         <i class="bi bi-check-lg me-1"></i> Cadastrar agendamento
                     </button>

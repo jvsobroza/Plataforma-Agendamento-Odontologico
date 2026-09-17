@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Http\Requests\StoreAgendamentoRequest;
 use App\Http\Requests\UpdateAgendamentoRequest;
 use App\Models\Agendamento;
@@ -42,13 +43,26 @@ class AgendamentoController extends Controller
     public function store(StoreAgendamentoRequest $request)
     {
         $agendamento = $request->validated();
-        $horarioAgendado = $agendamento['data_hora'];
-        if (Agendamento::where('data_hora', $horarioAgendado)->exists() && $agendamento['status_agendamento'] != 'cancelado' && $agendamento['id_filial'] == $request->id_filial) {
-            return redirect()->back()->withErrors(['data_hora' => 'O horário selecionado já está agendado. Por favor, escolha outro horário.'])->withInput();
-        } else {
-            Agendamento::create($agendamento);
+        $horarioAgendado = Carbon::parse($agendamento['data_hora']);
+        $horarioInicial = $horarioAgendado->copy()->subMinutes(30);
+        $horarioFinal = $horarioAgendado->copy()->addMinutes(30);
+        $conflito = Agendamento::where('id_filial', $agendamento['id_filial'])
+            ->where('ativo', true)
+            ->whereNotIn('status_agendamento', ['cancelado', 'Cancelado'])
+            ->where('data_hora', '>', $horarioInicial)
+            ->where('data_hora', '<=', $horarioFinal)
+            ->exists();
+
+        if ($conflito && $agendamento['status_agendamento'] !== 'cancelado') {
+            return redirect()->back()
+                ->withErrors(['data_hora' => 'Já existe um agendamento nesta filial no horário escolhido ou nos 30 minutos seguintes.'])
+                ->withInput();
         }
-        return redirect()->back()->with('success', 'Agendamento cadastrado com sucesso.');
+
+        Agendamento::create($agendamento);
+
+        return redirect()->route('agendamentos.index')
+            ->with('success', 'Agendamento cadastrado com sucesso.');
     }
 
     /**
@@ -87,8 +101,17 @@ class AgendamentoController extends Controller
      */
     public function update(UpdateAgendamentoRequest $request, Agendamento $agendamento)
     {
-        $agendamento->update($request->validated());
-        return redirect()->back()->with('success', 'Agendamento atualizado com sucesso.');
+        $dados = $request->validated();
+        $novaData = Carbon::parse($dados['data_hora']);
+        if (!$novaData->equalTo($agendamento->data_hora) && $novaData->isBefore(today())) {
+            return back()
+                ->withErrors(['data_hora' => 'A nova data do agendamento deve ser hoje ou uma data futura.'])
+                ->withInput();
+        }
+
+        $agendamento->update($dados);
+        return redirect()->route('agendamentos.show', $agendamento->id)
+            ->with('success', 'Agendamento atualizado com sucesso.');
     }
 
     /**
