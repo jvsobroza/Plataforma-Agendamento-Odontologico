@@ -45,9 +45,6 @@ A **Plataforma de Agendamento Odontológico** foi criada para digitalizar e orga
 - Blade (templates do Laravel)
 - [Bootstrap 5](https://getbootstrap.com/)
 
-**Testes**
-- PHPUnit / Laravel Test Suite
-
 **Em desenvolvimento**
 - [Docker](https://www.docker.com/) — containerização da aplicação para facilitar setup e deploy e para uso da Evolution API
 - [Evolution API](https://evolution-api.com/) — integração via WhatsApp para notificações e agendamentos (webhook de pacientes)
