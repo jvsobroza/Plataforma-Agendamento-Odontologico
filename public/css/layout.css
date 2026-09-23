@@ -96,6 +96,60 @@ body {
     padding: 32px 40px 48px;
 }
 
+.relatorio-cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.relatorio-imprimir {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+@media print {
+    .sidebar,
+    .relatorio-navegacao,
+    .relatorio-filtros,
+    .relatorio-imprimir {
+        display: none !important;
+    }
+
+    .topbar {
+        padding: 0 0 16px !important;
+        border-bottom: 1px solid #000 !important;
+    }
+
+    body,
+    .main-content,
+    .page-content {
+        background: #fff !important;
+    }
+
+    .page-content {
+        padding: 0 !important;
+    }
+
+    .relatorio-resumo {
+        margin-bottom: 1rem !important;
+    }
+
+    .relatorio-cabecalho {
+        border-bottom: 1px solid #000 !important;
+    }
+
+    .card {
+        border: 1px solid #bbb !important;
+        box-shadow: none !important;
+    }
+
+    table {
+        font-size: 11pt;
+    }
+}
+
 .stat-card {
     background-color: #ffffff;
     border-radius: 14px;

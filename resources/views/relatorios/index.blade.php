@@ -10,7 +10,7 @@
 @endsection
 
 @section('content')
-<div class="card mb-4">
+<div class="card mb-4 relatorio-navegacao">
     <div class="card-body">
         <div class="d-flex flex-wrap gap-2">
             @foreach ($tipos as $chave => $nome)
@@ -23,7 +23,7 @@
     </div>
 </div>
 
-<div class="card mb-4">
+<div class="card mb-4 relatorio-filtros">
     <div class="card-header section-card-header">
         <div>
             <span class="section-overline">Filtros</span>
@@ -80,7 +80,7 @@
     </div>
 </div>
 
-<div class="row g-3 mb-4">
+<div class="row g-3 mb-4 relatorio-resumo">
     <div class="col-md-6">
         <div class="card h-100">
             <div class="card-body d-flex align-items-center gap-3">
@@ -100,8 +100,11 @@
 </div>
 
 <div class="card">
-    <div class="card-header section-card-header">
+    <div class="card-header section-card-header relatorio-cabecalho">
         <h5 class="mb-0">Resultado</h5>
+        <button type="button" class="btn btn-outline-primary relatorio-imprimir" onclick="window.print()">
+            <i class="bi bi-printer"></i> Imprimir
+        </button>
     </div>
     <div class="table-responsive">
         <table class="table align-middle mb-0">
