@@ -1,58 +1,146 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Plataforma de Agendamento Odontológico
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistema web para gestão de clínicas odontológicas, desenvolvido como **Trabalho de Conclusão de Curso (TCC)** do curso de **Tecnologia em Análise e Desenvolvimento de Sistemas**.
 
-## About Laravel
+A aplicação permite gerenciar filiais, pacientes, serviços, planos de tratamento e agendamentos, com controle de acesso diferenciado para **dentistas (administradores)** e **secretárias**.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+![PHP](https://img.shields.io/badge/PHP-8.3-777BB4?style=flat&logo=php&logoColor=white)
+![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?style=flat&logo=laravel&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5-7952B3?style=flat&logo=bootstrap&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-em%20desenvolvimento-2496ED?style=flat&logo=docker&logoColor=white)
+![Evolution API](https://img.shields.io/badge/Evolution%20API-em%20desenvolvimento-25D366?style=flat&logo=whatsapp&logoColor=white)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Sobre o projeto
 
-## Learning Laravel
+A **Plataforma de Agendamento Odontológico** foi criada para digitalizar e organizar a rotina de uma clínica de odontologia, substituindo controles manuais por um sistema centralizado. O sistema oferece uma interface web (Blade + Bootstrap) para que dentistas e secretárias possam gerenciar toda a operação da clínica.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Funcionalidades
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Autenticação e controle de acesso**
+  - Login com dois perfis de usuário: `Dentista` (administrador) e `Secretária`.
+  - Middlewares dedicados (`CheckDentista`, `CheckSecretaria`) que restringem rotas e ações conforme o perfil.
+- **Gestão de filiais**
+  - Cadastro de filiais/unidades da clínica, com endereço, agenda e serviços oferecidos.
+- **Gestão de pacientes**
+  - Cadastro de pacientes com CPF, telefone, data de nascimento e observações médicas.
+- **Agendamentos**
+  - Criação e controle de consultas, com status de agendamento e status de pagamento.
+- **Planos de tratamento**
+  - Definição de planos por paciente, com serviços planejados e concluídos.
+- **Serviços e serviços de tratamento**
+  - Catálogo de serviços da clínica, associados a filiais e a planos de tratamento (com tempo estimado e preço).
+- **Gestão de secretárias**
+  - Cadastro, edição e restauração (soft delete/restore) de contas de secretárias pelo dentista/administrador.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Tecnologias utilizadas
 
-## Agentic Development
+**Back-end**
+- [PHP 8.3](https://www.php.net/)
+- [Laravel 13](https://laravel.com/)
+- SQLite (padrão em desenvolvimento, configurável para MySQL/PostgreSQL)
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+**Front-end**
+- Blade (templates do Laravel)
+- [Bootstrap 5](https://getbootstrap.com/)
 
+**Em desenvolvimento**
+- [Docker](https://www.docker.com/) — containerização da aplicação para facilitar setup e deploy e para uso da Evolution API
+- [Evolution API](https://evolution-api.com/) — integração via WhatsApp para notificações e agendamentos (webhook de pacientes)
+
+## Estrutura do banco de dados
+
+Principais entidades do sistema:
+
+| Tabela | Descrição |
+|---|---|
+| `usuarios` | Dentistas e secretárias (campo `tipo`: 1 = dentista, 2 = secretária) |
+| `filials` | Filiais/unidades da clínica |
+| `pacientes` | Cadastro de pacientes |
+| `servicos` | Catálogo de serviços oferecidos |
+| `filial_servico` | Relação N:N entre filiais e serviços |
+| `agendamentos` | Consultas agendadas por paciente/filial |
+| `plano_tratamentos` | Planos de tratamento por paciente |
+| `servico_tratamentos` | Serviços vinculados a um plano de tratamento e a um agendamento |
+
+## Como executar o projeto
+
+### Pré-requisitos
+
+- PHP >= 8.3
+- Composer
+- Node.js e npm
+- [Laragon](https://laragon.org/download/)
+- Git
+
+### Passo a passo
+1. **Instale o Laragon** e abra o programa.
+2. **Clone o repositório dentro da pasta `www` do Laragon:**
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+   cd C:\laragon\www
+   git clone https://github.com/jvsobroza/Plataforma-Agendamento-Odontologico.git
+   cd Plataforma-Agendamento-Odontologico
+```
+ 
+3. **Inicie os serviços do Laragon** clicando em **Start All** (sobe o Apache/Nginx e o MySQL).
+4. **Instale as dependências PHP** (use o terminal do próprio Laragon, já com o PHP e o Composer configurados no PATH):
+```bash
+   composer install
+```
+ 
+5. **Copie o arquivo de variáveis de ambiente:**
+```bash
+   cp .env.example .env
+```
+ 
+6. **Gere a chave da aplicação:**
+```bash
+   php artisan key:generate
+```
+ 
+7. **Configure o arquivo `.env`.** Por padrão o projeto usa SQLite, mas para usar o MySQL do Laragon, ajuste:
+```
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=plataforma_agendamento
+   DB_USERNAME=root
+   DB_PASSWORD=
+```
+   Crie o banco `plataforma_agendamento` pelo HeidiSQL (já incluso no Laragon) ou pelo terminal.
+ 
+   > Se preferir usar SQLite em vez do MySQL, mantenha `DB_CONNECTION=sqlite` e crie o arquivo com `touch database/database.sqlite`.
+ 
+8. **Execute as migrations:**
+```bash
+   php artisan migrate
+```
+ 
+9. **Instale as dependências JavaScript e compile os assets:**
+```bash
+   npm install
+   npm run build
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Perfis de acesso
 
-## Contributing
+| Perfil | Permissões |
+|---|---|
+| **Dentista** (`tipo = 1`) | Acesso total: gerencia filiais, serviços, planos de tratamento, secretárias e agendamentos |
+| **Secretária** (`tipo = 2`) | Acesso restrito: gerencia pacientes e agendamentos |
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Status do projeto
 
-## Code of Conduct
+Projeto desenvolvido para fins acadêmicos (TCC), em desenvolvimento contínuo. Próximas entregas:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- **Docker** — containerização da aplicação (app, banco de dados e assets) para facilitar setup e deploy.
+- **Evolution API** — integração com WhatsApp para envio de notificações e confirmação de agendamentos.
 
-## Security Vulnerabilities
+## Autor
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Desenvolvido por [**jvsobroza**](https://github.com/jvsobroza).
 
-## License
+## Licença
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Este projeto está sob a licença MIT.
