@@ -8,6 +8,7 @@ use App\Http\Controllers\ServicoController;
 use App\Http\Controllers\ServicoTratamentoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SecretariaController;
+use App\Http\Controllers\RelatorioController;
 use App\Http\Middleware\CheckDentista;
 use App\Http\Middleware\CheckSecretaria;
 use Illuminate\Http\Request;
@@ -70,6 +71,9 @@ Route::middleware([CheckDentista::class])->prefix('dentista')->name('dentista.')
 Route::middleware(['auth'])->group(function () {
     Route::resource('agendamentos', AgendamentoController::class);
     Route::resource('pacientes', PacienteController::class);
+    Route::get('/relatorios/{tipo?}', [RelatorioController::class, 'index'])
+        ->where('tipo', 'agendamentos|financeiro|servicos|cancelamentos|pacientes')
+        ->name('relatorios.index');
 });
 
 Route::middleware([CheckSecretaria::class])->prefix('secretaria')->name('secretaria.')->group(function () {

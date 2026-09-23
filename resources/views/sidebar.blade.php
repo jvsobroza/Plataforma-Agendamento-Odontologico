@@ -34,6 +34,12 @@
         <span>Pacientes</span>
       </a>
     </li>
+    <li>
+      <a href="{{ route('relatorios.index') }}" class="sidebar-link {{ request()->routeIs('relatorios.*') ? 'active' : '' }}">
+        <i class="bi bi-file-earmark-bar-graph"></i>
+        <span>Relatórios</span>
+      </a>
+    </li>
     @if (auth()->user()->tipo == 1)
     <li>
       <a href="{{ route('dentista.servicos.index') }}" class="sidebar-link {{ request()->routeIs('dentista.servicos.*') ? 'active' : '' }}">
