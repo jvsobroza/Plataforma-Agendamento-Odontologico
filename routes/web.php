@@ -29,7 +29,7 @@ Route::post('/login', function (Request $request) {
         'senha' => ['required'],
     ]);
     $credentials = [
-        'email' => $request->email,
+        'email' => strtolower($request->email),
         'password' => $request->senha,
     ];
 

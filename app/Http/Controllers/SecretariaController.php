@@ -43,7 +43,9 @@ class SecretariaController extends Controller
 
     public function store(StoreUserRequest $request)
     {
-        $user = User::create($request->validated());
+        $dados = $request->validated();
+        $dados['email'] = strtolower($dados['email']);
+        $user = User::create($dados);
         return redirect()->route('dentista.secretarias.index')->with('success', 'Secretária cadastrada com sucesso.');
     }
 
