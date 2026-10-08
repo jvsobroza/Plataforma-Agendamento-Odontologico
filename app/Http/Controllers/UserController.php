@@ -52,15 +52,12 @@ class UserController extends Controller
         //agenda de hoje na dashboard
         foreach ($agendamentosHoje as $ag) {
             $status = strtolower($ag->status_agendamento);
-
-            if ($status === 'cancelado') {
+            if ($status == 'cancelado') {
                 $status = 'agendado';
             }
-
             if ($status == 'pendente' && $ag->data_hora->lessThanOrEqualTo($agora)) {
                 $status = 'andamento';
             }
-
             $paciente = $ag->paciente->nome;
             $servicoTratamento = $ag->servicoTratamentos->first();
             $servico = 'Consulta';
