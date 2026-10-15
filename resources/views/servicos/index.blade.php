@@ -25,6 +25,10 @@
         </div>
     </div>
 
+    <div class="card-body border-bottom px-4 py-3">
+        <input type="text" id="buscarServico" class="form-control" placeholder="Buscar por serviço..." maxlength="100">
+    </div>
+
     <div class="card-body p-0">
         @forelse($servicos as $servico)
         @if($loop->first)
@@ -81,4 +85,20 @@
         @endforelse
     </div>
 </div>
+
+<script>
+    const campoBusca = document.getElementById('buscarServico');
+    const todasAsLinhas = document.querySelectorAll('tbody tr');
+    campoBusca.addEventListener('keyup', function() {
+        const textoBuscado = this.value;
+        todasAsLinhas.forEach(linha => {
+            const nomeDaLinha = linha.querySelector('td:nth-child(2)').textContent; //pega conteúdo segunda coluna
+            if (nomeDaLinha.includes(textoBuscado)) {
+                linha.style.display = '';
+            } else {
+                linha.style.display = 'none';
+            }
+        });
+    });
+</script>
 @endsection

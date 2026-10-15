@@ -29,7 +29,7 @@ class PlanoTratamentoController extends Controller
             'paciente_id' => 'required|integer|exists:pacientes,id',
         ]);
         $paciente = Paciente::where('ativo', true)->findOrFail($dados['paciente_id']);
-        $servicos = Servico::where('ativo', true)->get();
+        $servicos = Servico::where('ativo', true)->orderBy('nome')->get();
         return view("planos-tratamento.create", compact("paciente", "servicos"));
     }
 
