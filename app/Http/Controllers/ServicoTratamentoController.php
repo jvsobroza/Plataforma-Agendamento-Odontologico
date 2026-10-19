@@ -60,7 +60,6 @@ class ServicoTratamentoController extends Controller
             ->where('id_paciente', $agendamento->id_paciente)
             ->where('ativo', true)
             ->firstOrFail();
-
         if (!in_array((int) $dados['id_servico'], $this->extrairIdsServicos($plano->servicos_planejados), true)) {
             return back()
                 ->withErrors(['id_servico' => 'O serviço selecionado não está planejado neste plano de tratamento.'])
@@ -72,7 +71,7 @@ class ServicoTratamentoController extends Controller
             ->with('success', 'Agendamento confirmado com sucesso.');
     }
 
-    private function extrairIdsServicos(?string $servicos): array
+    private function extrairIdsServicos($servicos)
     {
         $ids = [];
         foreach (explode(',', $servicos ?? '') as $item) {
@@ -80,9 +79,7 @@ class ServicoTratamentoController extends Controller
             if ($item == '') {
                 continue;
             }
-            $idServico = str_contains($item, ';')
-                ? explode(';', $item, 2)[0]
-                : $item;
+            $idServico = str_contains($item, ';') ? explode(';', $item, 2)[0] : $item;
             $ids[] = (int) $idServico;
         }
         return $ids;
