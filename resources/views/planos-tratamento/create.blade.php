@@ -49,7 +49,6 @@
                     </div>
                     <input type="hidden" name="status" value="Em andamento">
                     <div class="mb-4">
-                        <span class="form-label d-block">Serviços planejados</span>
                         <div class="selecao-servicos">
                             <div class="coluna-servicos">
                                 <label class="form-label fw-semibold">

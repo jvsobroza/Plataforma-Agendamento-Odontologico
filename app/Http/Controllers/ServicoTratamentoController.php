@@ -9,6 +9,7 @@ use App\Models\PlanoTratamento;
 use App\Models\Servico;
 use App\Models\ServicoTratamento;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ServicoTratamentoController extends Controller
 {
@@ -65,8 +66,25 @@ class ServicoTratamentoController extends Controller
                 ->withErrors(['id_servico' => 'O serviço selecionado não está planejado neste plano de tratamento.'])
                 ->withInput();
         }
-        $servicoTratamento = ServicoTratamento::create($dados);
-        $agendamento->update(['status_agendamento' => 'concluido']);
+        DB::transaction(function () use ($dados, $agendamento, $plano) {
+            $plano = PlanoTratamento::whereKey($plano->id)
+                ->where('id_paciente', $agendamento->id_paciente)
+                ->where('ativo', true)
+                ->firstOrFail();
+            ServicoTratamento::create($dados);
+            $servicosConcluidos = $this->extrairIdsServicos($plano->servicos_concluidos);
+            $servicosConcluidos[] = (int) $dados['id_servico'];
+            $servicosConcluidos = array_values(array_unique($servicosConcluidos));
+            $servicosPlanejados = $this->extrairIdsServicos($plano->servicos_planejados);
+            $dadosPlano = [
+                'servicos_concluidos' => implode(',', $servicosConcluidos),
+            ];
+            if ($servicosPlanejados != [] && array_diff($servicosPlanejados, $servicosConcluidos) === []) {
+                $dadosPlano['status'] = 'Concluído';
+            }
+            $plano->update($dadosPlano);
+            $agendamento->update(['status_agendamento' => 'concluido']);
+        });
         return redirect()->route('agendamentos.show', $agendamento->id)
             ->with('success', 'Agendamento confirmado com sucesso.');
     }

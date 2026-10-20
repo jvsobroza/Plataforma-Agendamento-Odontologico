@@ -140,30 +140,24 @@
         const planoSelect = document.getElementById('id_planos');
         const servicoSelect = document.getElementById('id_servico');
         const servicoSelecionado = @json(old('id_servico'));
-
         function atualizarServicos() {
             const planoId = planoSelect ? planoSelect.value : '';
-
             Array.from(servicoSelect.options).forEach(function (option, index) {
-                if (index === 0) {
+                if (index == 0) {
                     option.hidden = false;
                     return;
                 }
-
                 const planos = (option.dataset.planos || '').split(',');
                 option.hidden = !planoId || !planos.includes(planoId);
             });
-
             const opcaoAtual = servicoSelect.options[servicoSelect.selectedIndex];
             if (!opcaoAtual || opcaoAtual.hidden) {
                 servicoSelect.value = '';
             }
         }
-
         if (planoSelect) {
             planoSelect.addEventListener('change', atualizarServicos);
             atualizarServicos();
-
             if (servicoSelecionado) {
                 servicoSelect.value = servicoSelecionado;
                 atualizarServicos();
