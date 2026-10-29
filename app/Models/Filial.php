@@ -26,6 +26,6 @@ class Filial extends Model
     }
     public function servicosFilial()
     {
-        return $this->belongsToMany(Servico::class, 'filial_servico', 'id_filial', 'id_servico')->orderBy('servicos.id', 'asc');
+        return $this->belongsToMany(Servico::class, 'filial_servico', 'id_filial', 'id_servico')->orderBy('servicos.nome', 'asc');
     }
 }
