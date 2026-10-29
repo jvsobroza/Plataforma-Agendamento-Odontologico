@@ -1,0 +1,14 @@
+services:
+  waha:
+    image: devlikeapro/waha:latest
+    container_name: waha
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      WAHA_API_KEY: tcc-odonto
+      WAHA_DASHBOARD_USERNAME: admin
+      WAHA_DASHBOARD_PASSWORD: admin123
+      WHATSAPP_SWAGGER_ENABLED: "true"
+      WAHA_DASHBOARD_ENABLED: "true"
+      WHATSAPP_DEFAULT_ENGINE: WEBJS

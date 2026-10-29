@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePacienteRequest;
 use App\Http\Requests\UpdatePacienteRequest;
 use App\Models\Paciente;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PacienteController extends Controller
 {
@@ -46,5 +48,20 @@ class PacienteController extends Controller
         $paciente->update(['ativo' => false]);
 
         return response()->json(['message' => 'Paciente desativado com sucesso.']);
+    }
+    public function webhook(Request $request)
+    {
+        $mensagem = $request->input('payload.body');
+        $remetente = $request->input('payload.from');
+        $fromMe = $request->input('payload.fromMe');
+        Log::info('Mensagem recebida', [
+            'remetente' => $remetente,
+            'mensagem' => $mensagem,
+            'fromMe' => $fromMe,
+        ]);
+
+        return response()->json([
+            'status' => 'ok'
+        ]);
     }
 }

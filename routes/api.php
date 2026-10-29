@@ -27,3 +27,5 @@ Route::apiResource('servicos-tratamento', ServicoTratamentoController::class)->n
 Route::put('servicos-tratamento/{id}', [ServicoTratamentoController::class, 'update']);
 
 Route::apiResource('servicos', ServicoController::class)->names('api.servicos');
+Route::post('/webhook/whatsapp', [PacienteController::class, 'webhook'])
+    ->name('webhook.whatsapp');
