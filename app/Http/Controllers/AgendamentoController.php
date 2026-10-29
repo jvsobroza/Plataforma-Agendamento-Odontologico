@@ -50,17 +50,15 @@ class AgendamentoController extends Controller
             ->where('ativo', true)
             ->whereNotIn('status_agendamento', ['cancelado', 'Cancelado'])
             ->where('data_hora', '>', $horarioInicial)
-            ->where('data_hora', '<=', $horarioFinal)
+            ->where('data_hora', '<', $horarioFinal)
             ->exists();
 
-        if ($conflito && $agendamento['status_agendamento'] !== 'cancelado') {
+        if ($conflito && $agendamento['status_agendamento'] != 'cancelado') {
             return redirect()->back()
                 ->withErrors(['data_hora' => 'Já existe um agendamento nesta filial no horário escolhido ou nos 30 minutos seguintes.'])
                 ->withInput();
         }
-
         Agendamento::create($agendamento);
-
         return redirect()->route('agendamentos.index')
             ->with('success', 'Agendamento cadastrado com sucesso.');
     }
@@ -108,7 +106,21 @@ class AgendamentoController extends Controller
                 ->withErrors(['data_hora' => 'A nova data do agendamento deve ser hoje ou uma data futura.'])
                 ->withInput();
         }
-
+        $horarioInicial = $novaData->copy()->subMinutes(30);
+        $horarioFinal = $novaData->copy()->addMinutes(30);
+        $conflito = Agendamento::where('id', '!=', $agendamento->id)
+            ->where('id_filial', $dados['id_filial'] ?? $agendamento->id_filial)
+            ->where('ativo', true)
+            ->whereNotIn('status_agendamento', ['cancelado', 'Cancelado'])
+            ->where('data_hora', '>', $horarioInicial)
+            ->where('data_hora', '<', $horarioFinal)
+            ->exists();
+        $status = $dados['status_agendamento'] ?? $agendamento->status_agendamento;
+        if ($conflito && $status != 'cancelado') {
+            return back()
+                ->withErrors(['data_hora' => 'Já existe um agendamento nesta filial no horário escolhido ou nos 30 minutos seguintes.'])
+                ->withInput();
+        }
         $agendamento->update($dados);
         return redirect()->route('agendamentos.show', $agendamento->id)
             ->with('success', 'Agendamento atualizado com sucesso.');
