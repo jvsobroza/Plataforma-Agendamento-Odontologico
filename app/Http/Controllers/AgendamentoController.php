@@ -44,6 +44,12 @@ class AgendamentoController extends Controller
     {
         $agendamento = $request->validated();
         $horarioAgendado = Carbon::parse($agendamento['data_hora']);
+        $hora = $horarioAgendado->format('H:i');
+        if ($hora >= '12:00' && $hora < '13:30') {
+            return back()
+                ->withErrors(['data_hora' => 'A clínica não realiza atendimentos entre 12h e 13h30.'])
+                ->withInput();
+        }
         $horarioInicial = $horarioAgendado->copy()->subMinutes(30);
         $horarioFinal = $horarioAgendado->copy()->addMinutes(30);
         $conflito = Agendamento::where('id_filial', $agendamento['id_filial'])
@@ -101,6 +107,12 @@ class AgendamentoController extends Controller
     {
         $dados = $request->validated();
         $novaData = Carbon::parse($dados['data_hora']);
+        $hora = $novaData->format('H:i');
+        if (!$novaData->equalTo($agendamento->data_hora) && $hora >= '12:00' && $hora < '13:30') {
+            return back()
+                ->withErrors(['data_hora' => 'A clínica não realiza atendimentos entre 12h e 13h30.'])
+                ->withInput();
+        }
         if (!$novaData->equalTo($agendamento->data_hora) && $novaData->isBefore(today())) {
             return back()
                 ->withErrors(['data_hora' => 'A nova data do agendamento deve ser hoje ou uma data futura.'])
