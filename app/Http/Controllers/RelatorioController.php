@@ -159,7 +159,7 @@ class RelatorioController extends Controller
             }
             $pacientes[$idPaciente]['quantidade']++;
             if (
-                $pacientes[$idPaciente]['ultimo_atendimento'] === null
+                $pacientes[$idPaciente]['ultimo_atendimento'] == null
                 || $agendamento->data_hora->greaterThan($pacientes[$idPaciente]['ultimo_atendimento'])
             ) {
                 $pacientes[$idPaciente]['ultimo_atendimento'] = $agendamento->data_hora;

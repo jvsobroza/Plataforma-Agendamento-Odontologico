@@ -53,16 +53,16 @@ class PacienteController extends Controller
         return response()->json(['message' => 'Paciente desativado com sucesso.']);
     }
     public function webhook(Request $request)
-    {
+    { //55 + DDD + número numero armazenado assim
         $mensagem = $request->input('payload.body');
         $remetente = $request->input('payload.from');
         $fromMe = $request->input('payload.fromMe');
-        if ($fromMe) {
+        if ($fromMe) { //ignora se for o mesmo número mandando mensagem
             return response()->json([
                 'status' => 'ok'
             ]);
         }
-        if (str_ends_with($remetente, '@lid')) {
+        if (str_ends_with($remetente, '@lid')) { //@lid identificador próprio do whatsapp
             $resposta = Http::withHeaders([
                 'X-Api-Key' => env('WAHA_API_KEY')
             ])->get("http://localhost:3000/api/tcc/lids/{$remetente}");
@@ -71,7 +71,7 @@ class PacienteController extends Controller
                 $remetente = $resposta->json('pn');
             }
         }
-        $numero = str_replace('@c.us', '', $remetente);
+        $numero = str_replace('@c.us', '', $remetente); //@c.us identificador de contato
         $chaveConversa = 'chatbot_' . $numero;
         $estado = Cache::get($chaveConversa);
         Log::info('Estado atual do chatbot', [
@@ -131,6 +131,16 @@ class PacienteController extends Controller
             ]);
         }
         if ($estado == 'aguardando_data_nascimento') {
+            if (!$this->dataValidate($mensagem)) {
+                sleep(2);
+                $this->enviarMensagem(
+                    $numero,
+                    "Data de nascimento inválida. Por favor, informe uma data válida no formato DD/MM/AAAA."
+                );
+                return response()->json([
+                    'status' => 'ok'
+                ]);
+            }
             Log::info('Dados para cadastro do paciente', [
                 'nome' => Cache::get('chatbot_nome_' . $numero),
                 'cpf' => Cache::get('chatbot_cpf_' . $numero),
@@ -188,15 +198,20 @@ class PacienteController extends Controller
             sleep(2);
             $this->enviarMensagem(
                 $numero,
-                "Olá, {$paciente->nome}!\n\nComo posso ajudar?\n\n1 - Agendar consulta\n2 - Consultar agendamento\n3 - Cancelar agendamento\n4 - Falar com a clínica"
+                "Olá, {$paciente->nome}!\n\nComo posso ajudar?\n\n1 - Agendar consulta\n2 - Consultar agendamento(s)\n3 - Cancelar agendamento\n4 - Falar com a clínica"
             );
+            return response()->json([
+                'status' => 'ok'
+            ]);
+        }
+        if ($estado == 'atendimento_humano') {
             return response()->json([
                 'status' => 'ok'
             ]);
         }
         if ($estado == 'menu_principal') {
             switch (trim($mensagem)) {
-                case '1':
+                case '1': //agendar consulta
                     Cache::put(
                         $chaveConversa,
                         'agendando_consulta',
@@ -208,10 +223,11 @@ class PacienteController extends Controller
                         "Certo! Vamos iniciar seu agendamento."
                     );
                     break;
-                case '2':
+                case '2': //visualizar agendamentos
                     $agendamentos = Agendamento::where('id_paciente', $paciente->id)
                         ->where('data_hora', '>=', now())
                         ->orderBy('data_hora')
+                        ->orderBy('status_agendamento')
                         ->get();
                     sleep(2);
                     if ($agendamentos->isEmpty()) {
@@ -224,8 +240,11 @@ class PacienteController extends Controller
                         foreach ($agendamentos as $agendamento) {
                             $texto .=
                                 "Data: " . \Carbon\Carbon::parse($agendamento->data_hora)->format('d/m/Y') . "\n" .
+                                "Hora: " . \Carbon\Carbon::parse($agendamento->data_hora)->format('H:i') . "\n" .
+                                "Filial: " . $agendamento->filial->cidade . "\n" .
+                                "Endereço: " . $agendamento->filial->endereco . "\n" .
                                 "Pagamento: " . $agendamento->status_pagamento . "\n" .
-                                "Status: " . $agendamento->status_agendamento . "\n" .
+                                "Status: " . ucfirst($agendamento->status_agendamento) . "\n" .
                                 "Observações: " . ($agendamento->observacoes ?? 'Nenhuma') . "\n\n";
                         }
                         $this->enviarMensagem(
@@ -235,18 +254,23 @@ class PacienteController extends Controller
                     }
 
                     break;
-                case '3':
+                case '3': //cancelar agendamento
                     sleep(2);
                     $this->enviarMensagem(
                         $numero,
                         "Certo! Vamos verificar seus agendamentos para cancelamento."
                     );
                     break;
-                case '4':
+                case '4': //falar com a clínica
+                    Cache::put(
+                        $chaveConversa,
+                        'atendimento_humano',
+                        now()->addMinutes(30)
+                    );
                     sleep(2);
                     $this->enviarMensagem(
                         $numero,
-                        "Certo! Aguarde para falar com a clínica."
+                        "Certo! Sua conversa foi encaminhada para a clínica.\n\nAguarde um momento para ser atendido."
                     );
                     break;
                 default:
@@ -276,10 +300,23 @@ class PacienteController extends Controller
         Http::withHeaders([
             'X-Api-Key' => env('WAHA_API_KEY')
         ])->post(env('WAHA_API_URL') . '/api/sendText', [
-                    'session' => env('WAHA_SESSION'),
-                    'chatId' => $numero . '@c.us',
-                    'text' => $mensagem
-                ]);
+            'session' => env('WAHA_SESSION'),
+            'chatId' => $numero . '@c.us',
+            'text' => $mensagem
+        ]);
+    }
+
+    protected function dataValidate($data) //verifica se a data está no formato correto, também se não é data futura
+    {
+        try {
+            $data = \Carbon\Carbon::createFromFormat('d/m/Y', $data);
+            if ($data->isFuture()) {
+                return false;
+            }
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     protected function isValidate($attribute, $value) //https://www.guj.com.br/t/laravel-validar-cpf/382494/
@@ -288,13 +325,11 @@ class PacienteController extends Controller
         if (strlen($c) != 11 || preg_match("/^{$c[0]}{11}$/", $c)) {
             return false;
         }
-        for ($s = 10, $n = 0, $i = 0; $s >= 2; $n += $c[$i++] * $s--)
-            ;
+        for ($s = 10, $n = 0, $i = 0; $s >= 2; $n += $c[$i++] * $s--);
         if ($c[9] != ((($n %= 11) < 2) ? 0 : 11 - $n)) {
             return false;
         }
-        for ($s = 11, $n = 0, $i = 0; $s >= 2; $n += $c[$i++] * $s--)
-            ;
+        for ($s = 11, $n = 0, $i = 0; $s >= 2; $n += $c[$i++] * $s--);
         if ($c[10] != ((($n %= 11) < 2) ? 0 : 11 - $n)) {
             return false;
         }
