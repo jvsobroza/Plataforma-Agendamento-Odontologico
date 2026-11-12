@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Agendamento;
+use Carbon\Carbon;
 
 class PacienteController extends Controller
 {
@@ -148,7 +149,7 @@ class PacienteController extends Controller
                 'telefone' => $numero,
                 'observacoes_medicas' => "Nenhuma observação médica",
             ]);
-            $dataNascimento = \Carbon\Carbon::createFromFormat('d/m/Y', $mensagem)
+            $dataNascimento = Carbon::createFromFormat('d/m/Y', $mensagem)
                 ->format('Y-m-d');
 
             Log::info('Data convertida', [
@@ -209,6 +210,71 @@ class PacienteController extends Controller
                 'status' => 'ok'
             ]);
         }
+        if ($estado == 'cancelando_agendamento') {
+            sleep(2);
+            $cancelamento = Cache::get('cancelamento_' . $numero);
+            $indice = (int) trim($mensagem) - 1;
+            if (isset($cancelamento[$indice])) {
+                Cache::put(
+                    'agendamento_cancelar_' . $numero,
+                    $cancelamento[$indice],
+                    now()->addMinutes(30)
+                );
+                Cache::put($chaveConversa, 'confirmando_cancelamento', now()->addMinutes(30));
+                $this->enviarMensagem(
+                    $numero,
+                    "Deseja realmente cancelar este agendamento?\n\nResponda SIM ou NÃO."
+                );
+            } else {
+                $this->enviarMensagem($numero, "Número inválido. Escolha um agendamento da lista.");
+            }
+            return response()->json([
+                'status' => 'ok'
+            ]);
+        }
+        if ($estado == 'confirmando_cancelamento') {
+            sleep(2);
+            $resposta = mb_strtoupper(trim($mensagem));
+            $agendamentoId = Cache::get('agendamento_cancelar_' . $numero);
+            if ($resposta == 'SIM') {
+                $agendamento = Agendamento::where('id', $agendamentoId)
+                    ->where('id_paciente', $paciente->id)
+                    ->where('data_hora', '>=', now()->addHours(48))
+                    ->whereNotIn('status_agendamento', ['cancelado', 'concluido'])
+                    ->first();
+                if ($agendamento) {
+                    $agendamento->update([
+                        'status_agendamento' => 'cancelado'
+                    ]);
+                    $this->enviarMensagem(
+                        $numero,
+                        "Agendamento cancelado com sucesso!"
+                    );
+                } else {
+                    $this->enviarMensagem(
+                        $numero,
+                        "Não foi possível cancelar o agendamento. Ele pode ter sido alterado ou não respeitar mais o prazo mínimo de 48 horas. /nPor favor, verifique seus agendamentos e tente novamente."
+                    );
+                }
+                Cache::forget('agendamento_cancelar_' . $numero);
+                Cache::put($chaveConversa, 'menu_principal', now()->addMinutes(30));
+            } elseif ($resposta == 'NÃO' || $resposta == 'NAO') {
+                Cache::forget('agendamento_cancelar_' . $numero);
+                Cache::put($chaveConversa, 'menu_principal', now()->addMinutes(30));
+                $this->enviarMensagem(
+                    $numero,
+                    "Cancelamento interrompido. Seu agendamento continua ativo. /nComo posso ajudar?\n\n1 - Agendar consulta\n2 - Consultar agendamento(s)\n3 - Cancelar agendamento\n4 - Falar com a clínica"
+                );
+            } else {
+                $this->enviarMensagem(
+                    $numero,
+                    "Resposta inválida. Digite SIM para confirmar ou NÃO para desistir."
+                );
+            }
+            return response()->json([
+                'status' => 'ok'
+            ]);
+        }
         if ($estado == 'menu_principal') {
             switch (trim($mensagem)) {
                 case '1': //agendar consulta
@@ -244,8 +310,8 @@ class PacienteController extends Controller
                         $texto = "Seus próximos agendamentos:\n\n";
                         foreach ($agendamentos as $agendamento) {
                             $texto .=
-                                "*Data:* " . \Carbon\Carbon::parse($agendamento->data_hora)->format('d/m/Y') . "\n" .
-                                "*Hora:* " . \Carbon\Carbon::parse($agendamento->data_hora)->format('H:i') . "\n" .
+                                "*Data:* " . Carbon::parse($agendamento->data_hora)->format('d/m/Y') . "\n" .
+                                "*Hora:* " . Carbon::parse($agendamento->data_hora)->format('H:i') . "\n" .
                                 "*Filial:* " . $agendamento->filial->cidade . "\n" .
                                 "*Endereço:* " . $agendamento->filial->endereco . "\n" .
                                 "*Pagamento:* " . $agendamento->status_pagamento . "\n" .
@@ -256,8 +322,8 @@ class PacienteController extends Controller
                             $texto .= "Seus agendamentos passados:\n\n";
                             foreach ($agendamentosAntes as $agendamento) {
                                 $texto .=
-                                    "*Data:* " . \Carbon\Carbon::parse($agendamento->data_hora)->format('d/m/Y') . "\n" .
-                                    "*Hora:* " . \Carbon\Carbon::parse($agendamento->data_hora)->format('H:i') . "\n" .
+                                    "*Data:* " . Carbon::parse($agendamento->data_hora)->format('d/m/Y') . "\n" .
+                                    "*Hora:* " . Carbon::parse($agendamento->data_hora)->format('H:i') . "\n" .
                                     "*Filial:* " . $agendamento->filial->cidade . "\n" .
                                     "*Endereço:* " . $agendamento->filial->endereco . "\n" .
                                     "*Pagamento:* " . $agendamento->status_pagamento . "\n" .
@@ -281,14 +347,43 @@ class PacienteController extends Controller
                             $texto
                         );
                     }
-
                     break;
                 case '3': //cancelar agendamento
                     sleep(2);
-                    $this->enviarMensagem(
-                        $numero,
-                        "Certo! Vamos verificar seus agendamentos para cancelamento."
+                    $agendamentos = Agendamento::where('id_paciente', $paciente->id)
+                        ->with('filial')
+                        ->where('data_hora', '>', now()->addHours(48))
+                        ->whereNotIn('status_agendamento', ['cancelado', 'concluido'])
+                        ->orderBy('data_hora')
+                        ->get();
+                    if ($agendamentos->isEmpty()) {
+                        $this->enviarMensagem(
+                            $numero,
+                            "Você não possui agendamentos disponíveis para cancelamento.\n\nLembre-se: alterações precisam ser solicitadas com pelo menos 48 horas de antecedência. \n\nPara voltar ao menu principal, envie qualquer mensagem."
+                        );
+                        break;
+                    }
+                    Cache::put(
+                        'cancelamento_' . $numero,
+                        $agendamentos->pluck('id')->values()->all(), //pega os agendamentos e monta um array com os ids
+                        now()->addMinutes(30)
                     );
+                    Cache::put(
+                        $chaveConversa,
+                        'cancelando_agendamento',
+                        now()->addMinutes(30)
+                    );
+
+                    $texto = "Estes são seus agendamentos disponíveis para cancelamento:\n\n";
+                    foreach ($agendamentos as $indice => $agendamento) {
+                        $texto .=
+                            ($indice + 1) . " - " .
+                            Carbon::parse($agendamento->data_hora)->format('d/m/Y \à\s H:i') . "\n" .
+                            "Filial: " . $agendamento->filial->cidade . "\n" .
+                            "Endereço: " . $agendamento->filial->endereco . "\n\n";
+                    }
+                    $texto .= "\nDigite o número do agendamento que deseja cancelar.";
+                    $this->enviarMensagem($numero, $texto);
                     break;
                 case '4': //falar com a clínica
                     Cache::put(
