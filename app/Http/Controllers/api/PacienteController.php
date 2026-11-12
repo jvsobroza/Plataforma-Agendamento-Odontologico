@@ -229,6 +229,11 @@ class PacienteController extends Controller
                         ->orderBy('data_hora')
                         ->orderBy('status_agendamento')
                         ->get();
+                    $agendamentosAntes = Agendamento::where('id_paciente', $paciente->id)->with(['servicoTratamentos.servico'])
+                        ->where('data_hora', '<', now())
+                        ->orderBy('data_hora')
+                        ->orderBy('status_agendamento')
+                        ->get();
                     sleep(2);
                     if ($agendamentos->isEmpty()) {
                         $this->enviarMensagem(
@@ -239,14 +244,38 @@ class PacienteController extends Controller
                         $texto = "Seus próximos agendamentos:\n\n";
                         foreach ($agendamentos as $agendamento) {
                             $texto .=
-                                "Data: " . \Carbon\Carbon::parse($agendamento->data_hora)->format('d/m/Y') . "\n" .
-                                "Hora: " . \Carbon\Carbon::parse($agendamento->data_hora)->format('H:i') . "\n" .
-                                "Filial: " . $agendamento->filial->cidade . "\n" .
-                                "Endereço: " . $agendamento->filial->endereco . "\n" .
-                                "Pagamento: " . $agendamento->status_pagamento . "\n" .
-                                "Status: " . ucfirst($agendamento->status_agendamento) . "\n" .
-                                "Observações: " . ($agendamento->observacoes ?? 'Nenhuma') . "\n\n";
+                                "*Data:* " . \Carbon\Carbon::parse($agendamento->data_hora)->format('d/m/Y') . "\n" .
+                                "*Hora:* " . \Carbon\Carbon::parse($agendamento->data_hora)->format('H:i') . "\n" .
+                                "*Filial:* " . $agendamento->filial->cidade . "\n" .
+                                "*Endereço:* " . $agendamento->filial->endereco . "\n" .
+                                "*Pagamento:* " . $agendamento->status_pagamento . "\n" .
+                                "*Status:* " . ucfirst($agendamento->status_agendamento) . "\n" .
+                                "*Observações:* " . ($agendamento->observacoes ?? 'Nenhuma') . "\n\n";
                         }
+                        if ($agendamentosAntes->isNotEmpty()) {
+                            $texto .= "Seus agendamentos passados:\n\n";
+                            foreach ($agendamentosAntes as $agendamento) {
+                                $texto .=
+                                    "*Data:* " . \Carbon\Carbon::parse($agendamento->data_hora)->format('d/m/Y') . "\n" .
+                                    "*Hora:* " . \Carbon\Carbon::parse($agendamento->data_hora)->format('H:i') . "\n" .
+                                    "*Filial:* " . $agendamento->filial->cidade . "\n" .
+                                    "*Endereço:* " . $agendamento->filial->endereco . "\n" .
+                                    "*Pagamento:* " . $agendamento->status_pagamento . "\n" .
+                                    "*Status:* " . ucfirst($agendamento->status_agendamento) . "\n" .
+                                    "*Observações:* " . ($agendamento->observacoes ?? 'Nenhuma') . "\n";
+                                $servicos = $agendamento->servicoTratamentos;
+                                if ($servicos->isNotEmpty()) {
+                                    $texto .=
+                                        "*Serviço realizado:* " . $servicos->pluck('servico.nome')->join(', ') . "\n" .
+                                        "*Preço total:* R$ " . number_format($servicos->sum('preco'), 2, ',', '.') . "\n\n";
+                                } else {
+                                    $texto .=
+                                        "*Serviço realizado:* Não informado\n" .
+                                        "*Preço total:* Não disponível\n\n";
+                                }
+                            }
+                        }
+                        $texto .= "*Para voltar ao menu principal, envie qualquer mensagem.*";
                         $this->enviarMensagem(
                             $numero,
                             $texto
