@@ -113,6 +113,16 @@ class PacienteController extends Controller
                     'status' => 'ok'
                 ]);
             }
+            if (Paciente::where("cpf", $cpf)->exists()) {
+                sleep(2);
+                $this->enviarMensagem(
+                    $numero,
+                    "Este CPF já está cadastrado. Por favor, informe outro CPF."
+                );
+                return response()->json([
+                    'status' => 'ok'
+                ]);
+            }
             Cache::put(
                 'chatbot_cpf_' . $numero,
                 $cpf,
