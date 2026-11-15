@@ -24,7 +24,7 @@ class UpdatePacienteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "nome" => "required|string",
+            "nome" => "required|string|min:10",
             "cpf" => [
                 "required",
                 "digits:11",

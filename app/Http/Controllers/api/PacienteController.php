@@ -82,9 +82,20 @@ class PacienteController extends Controller
             'mensagem' => $mensagem,
         ]);
         if ($estado == 'aguardando_nome') {
+            $nome = trim((string) $mensagem);
+            if (mb_strlen($nome) < 8) {
+                sleep(2);
+                $this->enviarMensagem(
+                    $numero,
+                    "Nome inválido. Por favor, informe seu nome completo com pelo menos 8 caracteres."
+                );
+                return response()->json([
+                    'status' => 'ok'
+                ]);
+            }
             Cache::put(
                 'chatbot_nome_' . $numero,
-                $mensagem,
+                $nome,
                 now()->addMinutes(30)
             );
             Cache::put(
@@ -200,7 +211,7 @@ class PacienteController extends Controller
             sleep(2);
             $this->enviarMensagem(
                 $numero,
-                "Olá! Não encontramos um cadastro vinculado a este número.\n\nPara continuar, informe seu nome completo."
+                "*Olá, seja bem vindo a Clínica Sante Oral!* Não encontramos um cadastro vinculado a este número no sistema.\n\nPara continuar, informe seu nome completo."
             );
             return response()->json([
                 'status' => 'ok'

@@ -23,7 +23,7 @@ class StorePacienteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "nome"=> "required|string",
+            "nome"=> "required|string|min:10",
             "cpf"=> "required|string|unique:pacientes,id|max:11",
             "data_nascimento"=> "required|date",
             "telefone"=> "required|string",
