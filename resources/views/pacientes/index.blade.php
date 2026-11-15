@@ -26,7 +26,24 @@
     </div>
 
     <div class="card-body border-bottom px-4 py-3">
-        <input type="text" id="buscarCPF" class="form-control" placeholder="Buscar por CPF..." maxlength="14">
+        <fieldset class="mb-3">
+            <legend class="fs-6 mb-2">Pesquisar por:</legend>
+            <div class="d-flex flex-wrap gap-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="tipoBuscaPaciente" id="buscarPorNome" value="nome" checked>
+                    <label class="form-check-label" for="buscarPorNome">Nome</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="tipoBuscaPaciente" id="buscarPorCpf" value="cpf">
+                    <label class="form-check-label" for="buscarPorCpf">CPF</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="tipoBuscaPaciente" id="buscarPorTelefone" value="telefone">
+                    <label class="form-check-label" for="buscarPorTelefone">Telefone</label>
+                </div>
+            </div>
+        </fieldset>
+        <input type="search" id="buscarPaciente" class="form-control" placeholder="Buscar por nome...">
     </div>
 
     <div class="card-body p-0">
@@ -99,17 +116,47 @@
 </div>
 
 <script>
-    const campoBusca = document.getElementById('buscarCPF');
+    const campoBusca = document.getElementById('buscarPaciente');
     const todasAsLinhas = document.querySelectorAll('tbody tr');
-    campoBusca.addEventListener('keyup', function() {
-        const textoBuscado = this.value;
+    const opcoesBusca = document.querySelectorAll('input[name="tipoBuscaPaciente"]');
+    const tiposBusca = {
+        nome: {
+            coluna: 2,
+            placeholder: 'Buscar por nome...'
+        },
+        cpf: {
+            coluna: 3,
+            placeholder: 'Buscar por CPF...'
+        },
+        telefone: {
+            coluna: 5,
+            placeholder: 'Buscar por telefone...'
+        }
+    };
+    const textoMinusculo = texto => texto.toLocaleLowerCase('pt-BR');
+
+    const filtrarPacientes = () => {
+        const tipoBusca = document.querySelector('input[name="tipoBuscaPaciente"]:checked').value;
+        const consulta = campoBusca.value.trim();
+        const textoBuscado = tipoBusca == 'nome' ?
+            textoMinusculo(consulta) :
+            consulta.replace(/\D/g, '');
         todasAsLinhas.forEach(linha => {
-            const cpfDaLinha = linha.querySelector('td:nth-child(3)').textContent; //pega conteúdo terceira coluna
-            if (cpfDaLinha.includes(textoBuscado)) {
-                linha.style.display = '';
-            } else {
-                linha.style.display = 'none';
-            }
+            const valorPaciente = linha.querySelector(`td:nth-child(${tiposBusca[tipoBusca].coluna})`).textContent;
+            const valorNormalizado = tipoBusca =='nome' ?
+                textoMinusculo(valorPaciente) :
+                valorPaciente.replace(/\D/g, '');//se for número ou cpf remove tudo, se não deixa o nome em minúscula
+            const corresponde = consulta == '' ||
+                (textoBuscado != '' && valorNormalizado.includes(textoBuscado));
+
+            linha.style.display = corresponde ? '' : 'none';
+        });
+    };
+    campoBusca.addEventListener('input', filtrarPacientes);
+    opcoesBusca.forEach(opcao => {
+        opcao.addEventListener('change', function() {
+            campoBusca.placeholder = tiposBusca[this.value].placeholder;
+            filtrarPacientes();
         });
     });
 </script>
