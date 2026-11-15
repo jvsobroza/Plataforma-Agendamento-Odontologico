@@ -211,7 +211,7 @@ class PacienteController extends Controller
             sleep(2);
             $this->enviarMensagem(
                 $numero,
-                "*Olá, seja bem vindo a Clínica Sante Oral!* Não encontramos um cadastro vinculado a este número no sistema.\n\nPara continuar, informe seu nome completo."
+                "*Olá, seja bem vindo(a) a Clínica Sante Oral!* Não encontramos um cadastro vinculado a este número no sistema.\n\nPara continuar, informe seu nome completo."
             );
             return response()->json([
                 'status' => 'ok'
@@ -226,7 +226,7 @@ class PacienteController extends Controller
             sleep(2);
             $this->enviarMensagem(
                 $numero,
-                "*Olá, {$paciente->nome}!*\n\nComo posso ajudar?\n\n1 - Agendar consulta\n2 - Consultar agendamento(s)\n3 - Cancelar agendamento\n4 - Remarcar agendamento\n5 - Falar com a clínica"
+                "*Olá, {$paciente->nome}! Seja bem vindo(a) a Clínica Sante Oral! *\n\nComo posso ajudar?\n\n1 - Agendar consulta\n2 - Consultar agendamento(s)\n3 - Cancelar agendamento\n4 - Remarcar agendamento\n5 - Falar com a clínica"
             );
             return response()->json([
                 'status' => 'ok'
@@ -336,20 +336,43 @@ class PacienteController extends Controller
                     ->whereNotIn('status_agendamento', ['cancelado', 'concluido'])
                     ->first();
                 if ($agendamento) {
-                    Cache::put($chaveConversa, 'agendando_consulta', now()->addMinutes(30));
-                    $this->enviarMensagem(
-                        $numero,
-                        "*Certo! Vamos iniciar a remarcação do seu agendamento.*\n\nDias que a filial está disponível para remarcação: \n\n1 - Segunda-feira\n2 - Terça-feira\n3 - Quarta-feira\n4 - Quinta-feira\n5 - Sexta-feira\n6 - Sábado\n7 - Domingo"
-                    );
+                    $filial = Filial::find($agendamento->id_filial);
+                    $diasPermitidos = array_map('intval', explode(';', $filial->datas_agenda));
+                    $datasDisponiveis = [];
+                    $dataIteracao = Carbon::now();
+                    while (count($datasDisponiveis) < 9) {
+                        if (in_array($dataIteracao->dayOfWeek, $diasPermitidos)) {
+                            $datasDisponiveis[] = $dataIteracao->format('Y-m-d');
+                        }
+                        $dataIteracao->addDay();
+                    }
+                    Cache::put('remarcacao_filial_id_' . $numero, $agendamento->id_filial, now()->addMinutes(30));
+                    Cache::put('remarcacao_datas_' . $numero, $datasDisponiveis, now()->addMinutes(30));
+                    Cache::put('remarcacao_agendamento_id_' . $numero, $agendamento->id, now()->addMinutes(30));
+                    Cache::forget('agendamento_remarcar_' . $numero);
+                    Cache::put($chaveConversa, 'selecionando_data_remarcacao', now()->addMinutes(30));
+                    $texto = "*Certo! Vamos iniciar a remarcação do seu agendamento.*\n\nEscolha uma das próximas datas disponíveis:\n\n";
+                    foreach ($datasDisponiveis as $indice => $dataStr) {
+                        $dataFmt = Carbon::parse($dataStr)->format('d/m/Y');
+                        $texto .= "*" . ($indice + 1) . " - {$dataFmt}*\n";
+                    }
+                    $texto .= "\nDigite o número da data desejada. Para cancelar a remarcação, envie outro número.";
+                    $this->enviarMensagem($numero, $texto);
                 } else {
+                    Cache::forget('remarcacao_agendamento_id_' . $numero);
+                    Cache::forget('remarcacao_datas_' . $numero);
+                    Cache::forget('remarcacao_filial_id_' . $numero);
+                    Cache::forget('agendamento_remarcar_' . $numero);
                     $this->enviarMensagem(
                         $numero,
-                        "*Não foi possível remarcar o agendamento. Ele pode ter sido alterado ou não respeitar mais o prazo mínimo de 48 horas.* \n\nPor favor, verifique seus agendamentos e tente novamente."
+                        "*Não foi possível remarcar o agendamento. Ele pode ter sido alterado ou não respeitar mais o prazo mínimo de 48 horas.* \n\nPor favor, verifique seus agendamentos e tente novamente.\n\n*Como posso ajudar?*\n\n1 - Agendar consulta\n2 - Consultar agendamento(s)\n3 - Cancelar agendamento\n4 - Remarcar agendamento\n5 - Falar com a clínica."
                     );
                     Cache::put($chaveConversa, 'menu_principal', now()->addMinutes(30));
                 }
-                Cache::forget('agendamento_remarcar_' . $numero);
             } elseif ($resposta == 'NÃO' || $resposta == 'NAO') {
+                Cache::forget('remarcacao_agendamento_id_' . $numero);
+                Cache::forget('remarcacao_datas_' . $numero);
+                Cache::forget('remarcacao_filial_id_' . $numero);
                 Cache::forget('agendamento_remarcar_' . $numero);
                 Cache::put($chaveConversa, 'menu_principal', now()->addMinutes(30));
                 $this->enviarMensagem(
@@ -367,6 +390,155 @@ class PacienteController extends Controller
             ]);
         }
 
+        if ($estado == 'selecionando_data_remarcacao') {
+            sleep(2);
+            $datasDisponiveis = Cache::get('remarcacao_datas_' . $numero);
+            $indice = (int) trim($mensagem) - 1;
+            if (isset($datasDisponiveis[$indice])) {
+                $dataEscolhida = $datasDisponiveis[$indice];
+                $filialId = Cache::get('remarcacao_filial_id_' . $numero);
+                $agendamentoId = Cache::get('remarcacao_agendamento_id_' . $numero);
+                $horariosPossiveis = [];
+                $inicioManha = Carbon::createFromTime(8, 30);
+                $fimManha = Carbon::createFromTime(11, 30);
+                while ($inicioManha <= $fimManha) {
+                    $horariosPossiveis[] = $inicioManha->format('H:i');
+                    $inicioManha->addMinutes(30);
+                }
+                $inicioTarde = Carbon::createFromTime(13, 30);
+                $fimTarde = Carbon::createFromTime(18, 00);
+                while ($inicioTarde <= $fimTarde) {
+                    $horariosPossiveis[] = $inicioTarde->format('H:i');
+                    $inicioTarde->addMinutes(30);
+                }
+
+                $consultaHorariosOcupados = Agendamento::where('id_filial', $filialId)
+                    ->whereDate('data_hora', $dataEscolhida)
+                    ->whereNotIn('status_agendamento', ['cancelado']);
+                if ($agendamentoId) {
+                    $consultaHorariosOcupados->where('id', '!=', $agendamentoId);
+                }
+                $horariosOcupados = $consultaHorariosOcupados->pluck('data_hora')->toArray();
+                $horariosOcupadosF = [];
+                foreach ($horariosOcupados as $dataHora) {
+                    $horariosOcupadosF[] = Carbon::parse($dataHora)->format('H:i');
+                }
+
+                $horariosDisponiveis = [];
+                $agora = Carbon::now();
+                foreach ($horariosPossiveis as $horario) {
+                    if (in_array($horario, $horariosOcupadosF)) {
+                        continue;
+                    }
+                    if ($dataEscolhida == $agora->format('Y-m-d')) {
+                        $horarioCarbon = Carbon::createFromFormat('Y-m-d H:i', $dataEscolhida . ' ' . $horario);
+                        if ($horarioCarbon->isPast()) {
+                            continue;
+                        }
+                    }
+                    $horariosDisponiveis[] = $horario;
+                }
+
+                if (empty($horariosDisponiveis)) {
+                    Cache::put('remarcacao_agendamento_id_' . $numero, $agendamentoId, now()->addMinutes(30));
+                    Cache::put('remarcacao_filial_id_' . $numero, $filialId, now()->addMinutes(30));
+                    Cache::put('remarcacao_datas_' . $numero, $datasDisponiveis, now()->addMinutes(30));
+                    Cache::put($chaveConversa, 'selecionando_data_remarcacao', now()->addMinutes(30));
+                    $this->enviarMensagem(
+                        $numero,
+                        "Infelizmente não há horários disponíveis para esta data. Por favor, escolha outra data digitando um número de 1 a 9."
+                    );
+                    return response()->json(['status' => 'ok']);
+                }
+
+                Cache::put('remarcacao_agendamento_id_' . $numero, $agendamentoId, now()->addMinutes(30));
+                Cache::put('remarcacao_filial_id_' . $numero, $filialId, now()->addMinutes(30));
+                Cache::put('remarcacao_datas_' . $numero, $datasDisponiveis, now()->addMinutes(30));
+                Cache::put('remarcacao_data_' . $numero, $dataEscolhida, now()->addMinutes(30));
+                Cache::put('remarcacao_horarios_' . $numero, $horariosDisponiveis, now()->addMinutes(30));
+                Cache::put($chaveConversa, 'selecionando_horario_remarcacao', now()->addMinutes(30));
+                $dataFmt = Carbon::parse($dataEscolhida)->format('d/m/Y');
+                $texto = "*Data selecionada: {$dataFmt}*\n\nSelecione um dos horários disponíveis:\n\n";
+                foreach ($horariosDisponiveis as $indice => $horario) {
+                    $texto .= "*" . ($indice + 1) . " - {$horario}*\n";
+                }
+                $texto .= "\nDigite o número do horário desejado. Para cancelar a remarcação, envie outro número.";
+                $this->enviarMensagem($numero, $texto);
+            } else {
+                Cache::forget('remarcacao_agendamento_id_' . $numero);
+                Cache::forget('remarcacao_filial_id_' . $numero);
+                Cache::forget('remarcacao_datas_' . $numero);
+                Cache::put($chaveConversa, 'menu_principal', now()->addMinutes(30));
+                $this->enviarMensagem(
+                    $numero,
+                    "*O fluxo de remarcação foi encerrado.*\n\nComo posso ajudar?\n\n1 - Agendar consulta\n2 - Consultar agendamento(s)\n3 - Cancelar agendamento\n4 - Remarcar agendamento\n5 - Falar com a clínica"
+                );
+            }
+            return response()->json(['status' => 'ok']);
+        }
+
+        if ($estado == 'selecionando_horario_remarcacao') {
+            sleep(2);
+            $horariosDisponiveis = Cache::get('remarcacao_horarios_' . $numero);
+            $indice = (int) trim($mensagem) - 1;
+
+            if (isset($horariosDisponiveis[$indice])) {
+                $horarioEscolhido = $horariosDisponiveis[$indice];
+                $dataEscolhida = Cache::get('remarcacao_data_' . $numero);
+                $filialId = Cache::get('remarcacao_filial_id_' . $numero);
+                $agendamentoId = Cache::get('remarcacao_agendamento_id_' . $numero);
+                $dataHoraCompleta = "{$dataEscolhida} {$horarioEscolhido}:00";
+                $agendamento = Agendamento::where('id', $agendamentoId)
+                    ->where('id_paciente', $paciente->id)
+                    ->where('id_filial', $filialId)
+                    ->where('data_hora', '>=', now()->addHours(48))
+                    ->whereNotIn('status_agendamento', ['cancelado', 'concluido'])
+                    ->first();
+                $horarioOcupado = Agendamento::where('id_filial', $filialId)
+                    ->where('data_hora', $dataHoraCompleta)
+                    ->whereNotIn('status_agendamento', ['cancelado'])
+                    ->where('id', '!=', $agendamentoId)
+                    ->exists();
+
+                if (!$agendamento || $horarioOcupado || Carbon::parse($dataHoraCompleta)->isPast()) {
+                    Cache::forget('remarcacao_agendamento_id_' . $numero);
+                    Cache::forget('remarcacao_filial_id_' . $numero);
+                    Cache::forget('remarcacao_datas_' . $numero);
+                    Cache::forget('remarcacao_data_' . $numero);
+                    Cache::forget('remarcacao_horarios_' . $numero);
+                    Cache::put($chaveConversa, 'menu_principal', now()->addMinutes(30));
+                    $this->enviarMensagem(
+                        $numero,
+                        "*Não foi possível concluir a remarcação. O agendamento pode ter sido alterado ou o horário escolhido não está mais disponível. O horário original foi mantido.*\n\nComo posso ajudar?\n\n1 - Agendar consulta\n2 - Consultar agendamento(s)\n3 - Cancelar agendamento\n4 - Remarcar agendamento\n5 - Falar com a clínica"
+                    );
+                    return response()->json(['status' => 'ok']);
+                }
+                $agendamento->update(['data_hora' => $dataHoraCompleta]);
+                Cache::forget('remarcacao_agendamento_id_' . $numero);
+                Cache::forget('remarcacao_filial_id_' . $numero);
+                Cache::forget('remarcacao_datas_' . $numero);
+                Cache::forget('remarcacao_data_' . $numero);
+                Cache::forget('remarcacao_horarios_' . $numero);
+                Cache::put($chaveConversa, 'menu_principal', now()->addMinutes(30));
+                $dataFmt = Carbon::parse($dataEscolhida)->format('d/m/Y');
+                $this->enviarMensagem(
+                    $numero,
+                    "*Agendamento remarcado com sucesso!*\n\n*Data*: {$dataFmt}\n*Horário*: {$horarioEscolhido}\n\nComo posso ajudar?\n\n1 - Agendar consulta\n2 - Consultar agendamento(s)\n3 - Cancelar agendamento\n4 - Remarcar agendamento\n5 - Falar com a clínica."
+                );
+            } else {
+                Cache::forget('remarcacao_agendamento_id_' . $numero);
+                Cache::forget('remarcacao_filial_id_' . $numero);
+                Cache::forget('remarcacao_datas_' . $numero);
+                Cache::forget('remarcacao_data_' . $numero);
+                Cache::forget('remarcacao_horarios_' . $numero);
+                Cache::put($chaveConversa, 'menu_principal', now()->addMinutes(30));
+                $this->enviarMensagem(
+                    $numero,
+                    "*O fluxo de remarcação foi encerrado.*\n\nComo posso ajudar?\n\n1 - Agendar consulta\n2 - Consultar agendamento(s)\n3 - Cancelar agendamento\n4 - Remarcar agendamento\n5 - Falar com a clínica"
+                );
+            }
+            return response()->json(['status' => 'ok']);
+        }
 
         if ($estado == 'selecionando_filial_agendamento') {
             sleep(2);
@@ -507,7 +679,7 @@ class PacienteController extends Controller
                 Cache::put($chaveConversa, 'menu_principal', now()->addMinutes(30));
                 $this->enviarMensagem(
                     $numero,
-                    "*Opção inválida. O fluxo de agendamento foi encerrado.*\n\nComo posso ajudar?\n\n1 - Agendar consulta\n2 - Consultar agendamento(s)\n3 - Cancelar agendamento\n4 - Remarcar agendamento\n5 - Falar com a clínica."
+                    "*O fluxo de agendamento foi encerrado.*\n\nComo posso ajudar?\n\n1 - Agendar consulta\n2 - Consultar agendamento(s)\n3 - Cancelar agendamento\n4 - Remarcar agendamento\n5 - Falar com a clínica."
                 );
             }
             return response()->json(['status' => 'ok']);
@@ -636,6 +808,15 @@ class PacienteController extends Controller
                         ->whereNotIn('status_agendamento', ['cancelado', 'concluido'])
                         ->orderBy('data_hora')
                         ->get();
+                    if ($agendamentos->isEmpty()) {
+                        Cache::forget('remarcação_' . $numero);
+                        Cache::put($chaveConversa, 'menu_principal', now()->addMinutes(30));
+                        $this->enviarMensagem(
+                            $numero,
+                            "*Você não possui agendamentos disponíveis para remarcação. É necessário que o agendamento esteja marcado para daqui a pelo menos 48 horas.*\n\nComo posso ajudar?\n\n1 - Agendar consulta\n2 - Consultar agendamento(s)\n3 - Cancelar agendamento\n4 - Remarcar agendamento\n5 - Falar com a clínica"
+                        );
+                        break;
+                    }
                     Cache::put(
                         'remarcação_' . $numero,
                         $agendamentos->pluck('id')->values()->all(), //pega os agendamentos e monta um array com os ids
