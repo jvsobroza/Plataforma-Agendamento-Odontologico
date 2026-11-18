@@ -232,11 +232,13 @@ class PacienteController extends Controller
                 'status' => 'ok'
             ]);
         }
+
         if ($estado == 'atendimento_humano') {
             return response()->json([
                 'status' => 'ok'
             ]);
         }
+
         if ($estado == 'cancelando_agendamento') {
             sleep(2);
             $cancelamento = Cache::get('cancelamento_' . $numero);
@@ -259,6 +261,7 @@ class PacienteController extends Controller
                 'status' => 'ok'
             ]);
         }
+
         if ($estado == 'confirmando_cancelamento') {
             sleep(2);
             $resposta = mb_strtoupper(trim($mensagem));
@@ -302,6 +305,7 @@ class PacienteController extends Controller
                 'status' => 'ok'
             ]);
         }
+
         if ($estado == 'remarcando_agendamento') {
             sleep(2);
             $remarcacao = Cache::get('remarcação_' . $numero);
@@ -325,6 +329,7 @@ class PacienteController extends Controller
                 'status' => 'ok'
             ]);
         }
+
         if ($estado == 'confirmando_remarcacao') {
             sleep(2);
             $resposta = mb_strtoupper(trim($mensagem));
@@ -643,6 +648,7 @@ class PacienteController extends Controller
             }
             return response()->json(['status' => 'ok']);
         }
+
         if ($estado == 'selecionando_horario_agendamento') {
             sleep(2);
             $horariosDisponiveis = Cache::get('novos_horarios_agendamento_' . $numero);

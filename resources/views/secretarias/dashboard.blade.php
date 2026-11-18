@@ -206,7 +206,7 @@
         document.getElementById('modalServicoHeader').innerText = item.servico;
         document.getElementById('modalFilial').innerText = filial.value || 'Não especificada';
         document.getElementById('modalHora').innerText = item.hora || '--:--';
-        document.getElementById('modalTempo').innerText = '45 min'; //FAZER TEMPO
+        document.getElementById('modalTempo').innerText = '30 min'; //FAZER TEMPO
         document.getElementById('modalServicoCard').innerText = item.servico || '';
         document.getElementById('modalStatus').innerText = statusTexto[item.status] || item.status;
         document.getElementById('modalObservacao').innerText = item.observacao || 'Sem observações.';
