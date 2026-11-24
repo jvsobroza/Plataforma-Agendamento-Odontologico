@@ -102,7 +102,7 @@
                         <label for="status_pagamento" class="form-label">Pagamento</label>
                         <select name="status_pagamento" id="status_pagamento" class="form-select" required>
                             @foreach (['Pendente', 'Pago'] as $status)
-                            <option value="{{ $status }}" @selected(old('status_pagamento', 'Pendente' )===$status)>
+                            <option value="{{ $status }}" @selected(old('status_pagamento', 'Pendente' )==$status)>
                                 {{ $status }}
                             </option>
                             @endforeach
@@ -142,7 +142,6 @@
         const filial = document.getElementById('id_filial');
         const pacientes = [];
         const opcoesPacientes = document.querySelectorAll('#pacientes_lista option');
-
         opcoesPacientes.forEach(function(item) {
             pacientes.push({
                 id: item.dataset.id,
@@ -154,12 +153,10 @@
         const pacienteId = document.getElementById('id_paciente');
         const resultado = document.getElementById('paciente_resultado');
         const form = pacienteId.closest('form');
-
         function horarioValido() {
             if (!dataHora.value) {
                 return true;
             }
-
             const horario = dataHora.value.split('T')[1];
             return horario >= '08:30' && horario <= '18:30';
         }
@@ -171,9 +168,8 @@
 
             const diasPermitidos = [];
             const diasFilial = (filial.selectedOptions[0].dataset.dias || '').split(';');
-
             diasFilial.forEach(function(dia) {
-                if (dia !== '') {
+                if (dia != '') {
                     diasPermitidos.push(Number(dia));
                 }
             });
@@ -183,25 +179,21 @@
         function validarData() {
             const horarioOk = horarioValido();
             const diaOk = diaValido();
-
             if (!horarioOk || !diaOk) {
                 dataHora.classList.add('is-invalid');
             } else {
                 dataHora.classList.remove('is-invalid');
             }
-
             if (!horarioOk) {
                 horarioErro.classList.add('d-block');
             } else {
                 horarioErro.classList.remove('d-block');
             }
-
             if (!diaOk) {
                 diaErro.classList.add('d-block');
             } else {
                 diaErro.classList.remove('d-block');
             }
-
             return horarioOk && diaOk;
         }
 
@@ -226,29 +218,24 @@
                 resultado.textContent = 'Digite os 11 números do CPF.';
                 return;
             }
-
             const paciente = pacientes.find(function(item) {
-                return item.cpf === cpf;
+                return item.cpf == cpf;
             });
-
             if (!paciente) {
                 resultado.className = 'form-text text-danger';
                 resultado.textContent = 'Nenhum paciente ativo encontrado para este CPF.';
                 return;
             }
-
             pacienteId.value = paciente.id;
             resultado.className = 'form-text text-success';
             resultado.textContent = 'Paciente encontrado: ' + paciente.nome;
         });
-
         form.addEventListener('submit', function(event) {
             if (!validarData()) {
                 event.preventDefault();
                 dataHora.focus();
                 return;
             }
-
             if (!pacienteId.value) {
                 event.preventDefault();
                 resultado.className = 'form-text text-danger';
