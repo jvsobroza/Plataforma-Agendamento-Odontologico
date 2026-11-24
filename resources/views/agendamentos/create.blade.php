@@ -61,12 +61,18 @@
                         <label for="id_filial" class="form-label">Filial</label>
                         <select name="id_filial" id="id_filial"
                             class="form-select @error('id_filial') is-invalid @enderror" required>
+                            @if (auth()->user()->tipo == 2)
+                            <option value="{{ auth()->user()->id_filial }}" data-dias="{{ auth()->user()->filial->datas_agenda }}" selected>
+                                {{ auth()->user()->filial->cidade }} - {{ auth()->user()->filial->endereco }}
+                            </option>
+                            @else
                             <option value="">Selecione uma filial</option>
                             @foreach ($filiais as $filial)
                             <option value="{{ $filial->id }}" data-dias="{{ $filial->datas_agenda }}" @selected(old('id_filial')==$filial->id)>
                                 {{ $filial->cidade }} - {{ $filial->endereco }}
                             </option>
                             @endforeach
+                            @endif
                         </select>
                         @error('id_filial')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -79,11 +85,13 @@
                             class="form-control @error('data_hora') is-invalid @enderror"
                             value="{{ old('data_hora', now()->format('Y-m-d\\TH:i')) }}"
                             min="{{ now()->format('Y-m-d\\TH:i') }}" required>
-                        <div id="horario_erro" class="invalid-feedback">
-                            Escolha um horário entre 08:30 e 18:30.
-                        </div>
-                        <div id="dia_erro" class="invalid-feedback">
-                            A filial escolhida não atende neste dia.
+                        <div>
+                            <div id="horario_erro" class="invalid-feedback">
+                                Escolha um horário entre 08:30 e 18:30.
+                            </div>
+                            <div id="dia_erro" class="invalid-feedback">
+                                A filial escolhida não atende neste dia.
+                            </div>
                         </div>
                         @error('data_hora')
                         <div class="invalid-feedback">{{ $message }}</div>
