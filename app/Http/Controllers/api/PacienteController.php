@@ -226,7 +226,7 @@ class PacienteController extends Controller
             sleep(2);
             $this->enviarMensagem(
                 $numero,
-                "*Olá, {$paciente->nome}! Seja bem vindo(a) a Clínica Sante Oral! *\n\nComo posso ajudar?\n\n1 - Agendar consulta\n2 - Consultar agendamento(s)\n3 - Cancelar agendamento\n4 - Remarcar agendamento\n5 - Falar com a clínica"
+                "*Olá, {$paciente->nome}! Seja bem vindo(a) a Clínica Sante Oral!*\n\nComo posso ajudar?\n\n1 - Agendar consulta\n2 - Consultar agendamento(s)\n3 - Cancelar agendamento\n4 - Remarcar agendamento\n5 - Falar com a clínica"
             );
             return response()->json([
                 'status' => 'ok'
