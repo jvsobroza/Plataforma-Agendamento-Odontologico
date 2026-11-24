@@ -153,6 +153,7 @@
         const pacienteId = document.getElementById('id_paciente');
         const resultado = document.getElementById('paciente_resultado');
         const form = pacienteId.closest('form');
+
         function horarioValido() {
             if (!dataHora.value) {
                 return true;

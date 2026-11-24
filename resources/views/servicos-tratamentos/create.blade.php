@@ -82,9 +82,9 @@
                         @php
                         $planosDoServico = [];
                         foreach ($servicosPorPlano as $planoId => $idsServicos) {
-                            if (in_array($servico->id, $idsServicos)) {
-                                $planosDoServico[] = $planoId;
-                            }
+                        if (in_array($servico->id, $idsServicos)) {
+                        $planosDoServico[] = $planoId;
+                        }
                         }
                         @endphp
                         <option value="{{ $servico->id }}"
@@ -136,13 +136,14 @@
 
 @push('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const planoSelect = document.getElementById('id_planos');
         const servicoSelect = document.getElementById('id_servico');
         const servicoSelecionado = @json(old('id_servico'));
+
         function atualizarServicos() {
             const planoId = planoSelect ? planoSelect.value : '';
-            Array.from(servicoSelect.options).forEach(function (option, index) {
+            Array.from(servicoSelect.options).forEach(function(option, index) {
                 if (index == 0) {
                     option.hidden = false;
                     return;

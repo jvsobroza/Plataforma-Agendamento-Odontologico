@@ -228,7 +228,7 @@
                 const editarLink = document.getElementById('modalEditarLink');
                 const excluirForm = document.getElementById('modalExcluirForm');
                 const agendamentoCancelado = status.includes('cancelado') || statusLabel.includes('cancelado');
-                const agendamentoConfirmado = status === 'concluido';
+                const agendamentoConfirmado = status == 'concluido';
 
                 verLink.href = `/agendamentos/${props.id}`;
                 editarLink.href = `/agendamentos/${props.id}/edit`;

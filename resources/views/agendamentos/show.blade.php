@@ -76,18 +76,17 @@
                     </a>
 
                     @if (strtolower($agendamento->status_agendamento) != 'concluido')
-                        <form action="{{ route('agendamentos.destroy', $agendamento->id) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-
-                            <button
-                                type="submit"
-                                class="btn btn-delete-patient"
-                                onclick="return confirm('Excluir este agendamento?')">
-                                <i class="bi bi-trash3"></i>
-                                Excluir
-                            </button>
-                        </form>
+                    <form action="{{ route('agendamentos.destroy', $agendamento->id) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button
+                            type="submit"
+                            class="btn btn-delete-patient"
+                            onclick="return confirm('Excluir este agendamento?')">
+                            <i class="bi bi-trash3"></i>
+                            Excluir
+                        </button>
+                    </form>
                     @endif
                 </div>
                 @endif

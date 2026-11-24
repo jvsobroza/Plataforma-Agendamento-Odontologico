@@ -143,9 +143,9 @@
             consulta.replace(/\D/g, '');
         todasAsLinhas.forEach(linha => {
             const valorPaciente = linha.querySelector(`td:nth-child(${tiposBusca[tipoBusca].coluna})`).textContent;
-            const valorNormalizado = tipoBusca =='nome' ?
+            const valorNormalizado = tipoBusca == 'nome' ?
                 textoMinusculo(valorPaciente) :
-                valorPaciente.replace(/\D/g, '');//se for número ou cpf remove tudo, se não deixa o nome em minúscula
+                valorPaciente.replace(/\D/g, ''); //se for número ou cpf remove tudo, se não deixa o nome em minúscula
             const corresponde = consulta == '' ||
                 (textoBuscado != '' && valorNormalizado.includes(textoBuscado));
 
