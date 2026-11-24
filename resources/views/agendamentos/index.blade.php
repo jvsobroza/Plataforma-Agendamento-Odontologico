@@ -39,7 +39,6 @@
     </div>
 </div>
 
-{{-- Modal de detalhes do agendamento --}}
 <div class="modal fade" id="agendamentoModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="border-radius: 16px; border: none;">
@@ -229,10 +228,7 @@
                 const editarLink = document.getElementById('modalEditarLink');
                 const excluirForm = document.getElementById('modalExcluirForm');
                 const agendamentoCancelado = status.includes('cancelado') || statusLabel.includes('cancelado');
-                const agendamentoConfirmado = status.includes('concluido') ||
-                    status.includes('confirmado') ||
-                    statusLabel.includes('concluido') ||
-                    statusLabel.includes('confirmado');
+                const agendamentoConfirmado = status === 'concluido';
 
                 verLink.href = `/agendamentos/${props.id}`;
                 editarLink.href = `/agendamentos/${props.id}/edit`;
@@ -254,7 +250,11 @@
                     excluirForm.style.setProperty('display', 'none', 'important');
                 } else {
                     editarLink.style.removeProperty('display');
-                    excluirForm.style.removeProperty('display');
+                    if (agendamentoConfirmado) {
+                        excluirForm.style.setProperty('display', 'none', 'important');
+                    } else {
+                        excluirForm.style.removeProperty('display');
+                    }
                 }
 
                 new bootstrap.Modal(document.getElementById('agendamentoModal')).show();

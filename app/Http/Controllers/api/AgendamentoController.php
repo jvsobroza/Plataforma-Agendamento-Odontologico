@@ -47,6 +47,13 @@ class AgendamentoController extends Controller
     public function destroy(string $id)
     {
         $agendamento = Agendamento::findOrFail($id);
+        $status = strtolower(trim($agendamento->status_agendamento));
+        if ($status == 'concluido') {
+            return response()->json([
+                'message' => 'Agendamentos concluídos não podem ser excluídos.',
+            ]);
+        }
+
         $agendamento->update([
             'ativo' => false,
             'status_agendamento' => 'cancelado',
