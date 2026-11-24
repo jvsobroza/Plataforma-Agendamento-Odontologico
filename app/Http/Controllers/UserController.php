@@ -134,7 +134,7 @@ class UserController extends Controller
         $agora = Carbon::now();
         $consultasHoje = Agendamento::whereDate('data_hora', $hoje)->where('ativo', true)->where('id_filial', $filial[0]['id'] ?? null)->count();
         $totalPacientes = Paciente::where('ativo', true)->count();
-        $consultasNoMes = Agendamento::whereMonth('data_hora', $hoje->month)->whereYear('data_hora', $hoje->year)->where('ativo', true)->count();
+        $consultasNoMes = Agendamento::whereMonth('data_hora', $hoje->month)->whereYear('data_hora', $hoje->year)->where('ativo', true)->where('id_filial', $filial[0]['id'] ?? null)->count();
         $agendamentosHoje = Agendamento::with(['paciente', 'servicoTratamentos.servico'])
             ->whereDate('data_hora', $hoje)
             ->where('ativo', true)
